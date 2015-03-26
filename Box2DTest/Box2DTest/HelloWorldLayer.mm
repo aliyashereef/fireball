@@ -16,6 +16,7 @@
 #import "AppDelegate.h"
 
 
+
 enum {
 	kTagParentNode = 1,
 };
@@ -57,18 +58,20 @@ enum {
 		// init physics
 		[self initPhysics];
         // Create a world
-        b2Vec2 gravity = b2Vec2(0.0f, -8.0f);
+        b2Vec2 gravity = b2Vec2(-0.0f, -8.0f);
         _world = new b2World(gravity);
         
         //a static body
         b2BodyDef bodyDef;
         bodyDef.type = b2_dynamicBody;
-        bodyDef.position.Set(200/PTM_RATIO, 200/PTM_RATIO);
+        bodyDef.position.Set(500/PTM_RATIO, 500/PTM_RATIO);
+        bodyDef.gravityScale = 0.6 ;
+        bodyDef.allowSleep = false ;
         b2Body *body = world->CreateBody(&bodyDef);
         
         // Define another box shape for our dynamic body.
         b2PolygonShape dynamicBox;
-        dynamicBox.SetAsBox(.5f, .5f);//These are mid points for our 1m box
+        dynamicBox.SetAsBox( 0.5f, 0.5f);//These are mid points for our 1m box
         
         // Define the dynamic body fixture.
         b2FixtureDef fixtureDef;
@@ -81,13 +84,16 @@ enum {
     
         int idx = (CCRANDOM_0_1() > .5 ? 0:1);
         int idy = (CCRANDOM_0_1() > .5 ? 0:1);
-        CCPhysicsSprite *sprite = [CCPhysicsSprite spriteWithTexture:spriteTexture_ rect:CGRectMake(32 * idx,32 * idy,32,32)];
+        CCPhysicsSprite *sprite = [CCPhysicsSprite spriteWithTexture:spriteTexture_ rect:CGRectMake(32 * idx,32 * idy,100,100)];
         [parent addChild:sprite];
-        
+
         [sprite setPTMRatio:PTM_RATIO];
         [sprite setB2Body:body];
         [sprite setPosition: ccp( 200, 200)];
-		
+        
+        CCSprite* s = [CCSprite spriteWithFile:@"images.png" rect:CGRectMake(0,0,100,100)];
+        [self addChild: s];
+        [self moveRandom:s];
 		[self scheduleUpdate];
 	}
 	return self;
@@ -107,9 +113,9 @@ enum {
 -(void) initPhysics
 {
 	CGSize s = [[CCDirector sharedDirector] winSize];
-	
+    NSLog(@"%f ============== %f",s.width,s.height);
 	b2Vec2 gravity;
-	gravity.Set(0.0f, -10.0f);
+	gravity.Set(0.0f, -0.0f);
 	world = new b2World(gravity);
 	
 	
@@ -173,20 +179,29 @@ enum {
 	
 	kmGLPushMatrix();
 	
-	world->DrawDebugData();	
+	world->DrawDebugData();
 	
 	kmGLPopMatrix();
 }
 
+-(void)moveRandom:(CCSprite*)s
+{
+    CGPoint randomPoint = ccp(arc4random()%568, arc4random()%320);
+    NSLog(@"%@", NSStringFromCGPoint(randomPoint));
+    
+    [s runAction:
+     [CCSequence actions:
+      [CCMoveTo actionWithDuration:0.9 position: randomPoint],
+      [CCCallBlock actionWithBlock:^{
+         [self performSelector:@selector(moveRandom:) withObject:s afterDelay:0.0];
+     }],
+      nil]
+     ];
+}
 
 -(void) update: (ccTime) dt
 {
-	//It is recommended that a fixed time step is used with Box2D for stability
-	//of the simulation, however, we are using a variable time step here.
-	//You need to make an informed choice, the following URL is useful
-	//http://gafferongames.com/game-physics/fix-your-timestep/
-	
-	int32 velocityIterations = 3;
+    int32 velocityIterations = 8;
 	int32 positionIterations = 1;
 	
 	// Instruct the world to perform a single step of simulation. It is
@@ -194,15 +209,25 @@ enum {
 	world->Step(dt, velocityIterations, positionIterations);	
 }
 
-
+- (void)accelerometer:(UIAccelerometer*)accelerometer didAccelerate:(UIAcceleration*)acceleration
+{
+    static float prevX=0, prevY=0;
+    #define kFilterFactor .05f
+    float accelX = (float) acceleration.x * kFilterFactor + (1- kFilterFactor)*prevX;
+    float accelY = (float) acceleration.y * kFilterFactor + (1- kFilterFactor)*prevY;
+    
+    prevX = accelX;
+    prevY = accelY;
+    
+    // accelerometer values are in "Portrait" mode. Change them to Landscape left
+    // multiply the gravity by 10
+    b2Vec2 gravity( acceleration.y  * 10, -acceleration.x  * 10);
+    
+    world->SetGravity( gravity );
+}
 #pragma mark GameKit delegate
 
--(void) achievementViewControllerDidFinish:(GKAchievementViewController *)viewController
-{
+- (void)gameCenterViewControllerDidFinish:(GKGameCenterViewController *)gameCenterViewController{
+    
 }
-
--(void) leaderboardViewControllerDidFinish:(GKLeaderboardViewController *)viewController
-{
-}
-
 @end

@@ -188,6 +188,7 @@
 		4D06B2611AC2ED1F00B7AFF5 /* IntroLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4D06B2601AC2ED1F00B7AFF5 /* IntroLayer.mm */; };
 		4D06B2641AC2ED1F00B7AFF5 /* GLES-Render.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4D06B2631AC2ED1F00B7AFF5 /* GLES-Render.mm */; };
 		4D06B2661AC2ED1F00B7AFF5 /* blocks.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D06B2651AC2ED1F00B7AFF5 /* blocks.png */; };
+		4D06B4C61AC3E2B400B7AFF5 /* images.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D06B4C51AC3E2B400B7AFF5 /* images.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -569,6 +570,7 @@
 		4D06B2621AC2ED1F00B7AFF5 /* GLES-Render.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GLES-Render.h"; sourceTree = "<group>"; };
 		4D06B2631AC2ED1F00B7AFF5 /* GLES-Render.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "GLES-Render.mm"; sourceTree = "<group>"; };
 		4D06B2651AC2ED1F00B7AFF5 /* blocks.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = blocks.png; path = Resources/blocks.png; sourceTree = "<group>"; };
+		4D06B4C51AC3E2B400B7AFF5 /* images.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = images.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -647,6 +649,7 @@
 		4D06B0361AC2ED1D00B7AFF5 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				4D06B4C51AC3E2B400B7AFF5 /* images.png */,
 				4D06B0371AC2ED1D00B7AFF5 /* Default.png */,
 				4D06B0391AC2ED1D00B7AFF5 /* Default@2x.png */,
 				4D06B03B1AC2ED1D00B7AFF5 /* Default-568h@2x.png */,
@@ -1241,6 +1244,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4D06B4C61AC3E2B400B7AFF5 /* images.png in Resources */,
 				4D06B0481AC2ED1D00B7AFF5 /* Icon.png in Resources */,
 				4D06B1A61AC2ED1E00B7AFF5 /* ChangeLog in Resources */,
 				4D06B03A1AC2ED1D00B7AFF5 /* Default@2x.png in Resources */,
@@ -1432,7 +1436,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Developer: PRATHAPAN SETHUMAPHAVAN (3KHRN2958R)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -1453,7 +1457,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Developer: PRATHAPAN SETHUMAPHAVAN (3KHRN2958R)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					NDEBUG,
@@ -1473,7 +1477,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer: PRATHAPAN SETHUMAPHAVAN (3KHRN2958R)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: PRATHAPAN SETHUMAPHAVAN (3KHRN2958R)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1492,7 +1496,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "b454456a-f7fc-4e73-b5fd-f149fcf68042";
 				USER_HEADER_SEARCH_PATHS = "\"Box2DTest/libs\"";
 				WRAPPER_EXTENSION = app;
 			};
@@ -1503,7 +1507,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer: PRATHAPAN SETHUMAPHAVAN (3KHRN2958R)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: PRATHAPAN SETHUMAPHAVAN (3KHRN2958R)";
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Box2DTest/Prefix.pch;
@@ -1521,7 +1525,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "b454456a-f7fc-4e73-b5fd-f149fcf68042";
 				USER_HEADER_SEARCH_PATHS = "\"Box2DTest/libs\"";
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;
