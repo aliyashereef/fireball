@@ -189,6 +189,9 @@
 		4D06B2641AC2ED1F00B7AFF5 /* GLES-Render.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4D06B2631AC2ED1F00B7AFF5 /* GLES-Render.mm */; };
 		4D06B2661AC2ED1F00B7AFF5 /* blocks.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D06B2651AC2ED1F00B7AFF5 /* blocks.png */; };
 		4D06B4C61AC3E2B400B7AFF5 /* images.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D06B4C51AC3E2B400B7AFF5 /* images.png */; };
+		4D06B7291AC5705D00B7AFF5 /* images.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D06B7281AC5705D00B7AFF5 /* images.png */; };
+		4D06B72C1AC5720C00B7AFF5 /* MyContactListener.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4D06B72B1AC5720C00B7AFF5 /* MyContactListener.mm */; };
+		4D06B72E1AC57F3600B7AFF5 /* Step2.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D06B72D1AC57F3600B7AFF5 /* Step2.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -571,6 +574,10 @@
 		4D06B2631AC2ED1F00B7AFF5 /* GLES-Render.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "GLES-Render.mm"; sourceTree = "<group>"; };
 		4D06B2651AC2ED1F00B7AFF5 /* blocks.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = blocks.png; path = Resources/blocks.png; sourceTree = "<group>"; };
 		4D06B4C51AC3E2B400B7AFF5 /* images.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = images.png; sourceTree = "<group>"; };
+		4D06B7281AC5705D00B7AFF5 /* images.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = images.png; sourceTree = "<group>"; };
+		4D06B72A1AC5720C00B7AFF5 /* MyContactListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyContactListener.h; sourceTree = "<group>"; };
+		4D06B72B1AC5720C00B7AFF5 /* MyContactListener.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MyContactListener.mm; sourceTree = "<group>"; };
+		4D06B72D1AC57F3600B7AFF5 /* Step2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Step2.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -634,7 +641,11 @@
 				4D06B2591AC2ED1F00B7AFF5 /* AppDelegate.h */,
 				4D06B25A1AC2ED1F00B7AFF5 /* AppDelegate.mm */,
 				4D06B25C1AC2ED1F00B7AFF5 /* HelloWorldLayer.h */,
+				4D06B72A1AC5720C00B7AFF5 /* MyContactListener.h */,
+				4D06B72B1AC5720C00B7AFF5 /* MyContactListener.mm */,
 				4D06B25D1AC2ED1F00B7AFF5 /* HelloWorldLayer.mm */,
+				4D06B7281AC5705D00B7AFF5 /* images.png */,
+				4D06B72D1AC57F3600B7AFF5 /* Step2.png */,
 				4D06B25F1AC2ED1F00B7AFF5 /* IntroLayer.h */,
 				4D06B2601AC2ED1F00B7AFF5 /* IntroLayer.mm */,
 				4D06B2621AC2ED1F00B7AFF5 /* GLES-Render.h */,
@@ -1250,9 +1261,11 @@
 				4D06B03A1AC2ED1D00B7AFF5 /* Default@2x.png in Resources */,
 				4D06B0441AC2ED1D00B7AFF5 /* Icon-Small.png in Resources */,
 				4D06B0401AC2ED1D00B7AFF5 /* Icon-72.png in Resources */,
+				4D06B7291AC5705D00B7AFF5 /* images.png in Resources */,
 				4D06B0381AC2ED1D00B7AFF5 /* Default.png in Resources */,
 				4D06B0421AC2ED1D00B7AFF5 /* Icon-Small-50.png in Resources */,
 				4D06B04D1AC2ED1D00B7AFF5 /* iTunesArtwork in Resources */,
+				4D06B72E1AC57F3600B7AFF5 /* Step2.png in Resources */,
 				4D06B2661AC2ED1F00B7AFF5 /* blocks.png in Resources */,
 				4D06B0461AC2ED1D00B7AFF5 /* Icon-Small@2x.png in Resources */,
 				4D06B03E1AC2ED1D00B7AFF5 /* Default-Landscape~ipad.png in Resources */,
@@ -1290,6 +1303,7 @@
 				4D06B2141AC2ED1F00B7AFF5 /* b2ChainAndCircleContact.cpp in Sources */,
 				4D06B21A1AC2ED1F00B7AFF5 /* b2CircleContact.cpp in Sources */,
 				4D06B1B81AC2ED1E00B7AFF5 /* ray2.c in Sources */,
+				4D06B72C1AC5720C00B7AFF5 /* MyContactListener.mm in Sources */,
 				4D06B1531AC2ED1E00B7AFF5 /* base64.c in Sources */,
 				4D06B0761AC2ED1D00B7AFF5 /* CCActionTween.m in Sources */,
 				4D06B0AD1AC2ED1D00B7AFF5 /* CCLabelBMFont.m in Sources */,
@@ -1496,7 +1510,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "b454456a-f7fc-4e73-b5fd-f149fcf68042";
+				PROVISIONING_PROFILE = "a4507e83-aa9a-4075-9e0f-f70095c4bee9";
 				USER_HEADER_SEARCH_PATHS = "\"Box2DTest/libs\"";
 				WRAPPER_EXTENSION = app;
 			};
@@ -1525,7 +1539,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "b454456a-f7fc-4e73-b5fd-f149fcf68042";
+				PROVISIONING_PROFILE = "a4507e83-aa9a-4075-9e0f-f70095c4bee9";
 				USER_HEADER_SEARCH_PATHS = "\"Box2DTest/libs\"";
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;

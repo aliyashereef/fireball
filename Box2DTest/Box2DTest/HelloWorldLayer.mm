@@ -14,7 +14,7 @@
 
 // Needed to obtain the Navigation Controller
 #import "AppDelegate.h"
-
+#import "MyContactListener.h"
 
 
 enum {
@@ -24,7 +24,13 @@ enum {
 
 #pragma mark - HelloWorldLayer
 
-@interface HelloWorldLayer()
+@interface HelloWorldLayer(){
+    b2Fixture *_ballFixture;
+    b2Fixture *_dotFixture;
+    MyContactListener *_contactListener;
+
+
+}
 -(void) initPhysics;
 
 @end
@@ -60,12 +66,41 @@ enum {
         // Create a world
         b2Vec2 gravity = b2Vec2(-0.0f, -8.0f);
         _world = new b2World(gravity);
-        
-        //a static body
+        // Create contact listener
+        _contactListener = new MyContactListener();
+        _world->SetContactListener(_contactListener);
+            
+            // Create block and add it to the layer
+            CCSprite *block = [CCSprite spriteWithFile:@"images.png"];
+            block.position = ccp(100, 250);
+            block.tag = 1;
+            [self addChild:block];
+            
+            // Create block body
+            b2BodyDef blockBodyDef;
+            blockBodyDef.type = b2_dynamicBody;
+            blockBodyDef.position.Set(arc4random()%568, arc4random()%320);
+            blockBodyDef.userData = block;
+            b2Body *blockBody = _world->CreateBody(&blockBodyDef);
+            
+            // Create block shape
+            b2PolygonShape blockShape;
+            blockShape.SetAsBox(block.contentSize.width/PTM_RATIO/2,
+                                block.contentSize.height/PTM_RATIO/2);
+            
+            // Create shape definition and add to body
+            b2FixtureDef blockShapeDef;
+            blockShapeDef.shape = &blockShape;
+            blockShapeDef.density = 10.0;
+            blockShapeDef.friction = 0.0;
+            blockShapeDef.restitution = 0.1f;
+            blockBody->CreateFixture(&blockShapeDef);
+        [self moveRandom:block];
+        //a box body
         b2BodyDef bodyDef;
         bodyDef.type = b2_dynamicBody;
         bodyDef.position.Set(500/PTM_RATIO, 500/PTM_RATIO);
-        bodyDef.gravityScale = 0.6 ;
+        bodyDef.gravityScale = 1.5 ;
         bodyDef.allowSleep = false ;
         b2Body *body = world->CreateBody(&bodyDef);
         
@@ -77,23 +112,15 @@ enum {
         b2FixtureDef fixtureDef;
         fixtureDef.shape = &dynamicBox;
         fixtureDef.density = 1.0f;
-        fixtureDef.friction = 1.0f;
-        body->CreateFixture(&fixtureDef);
+        fixtureDef.friction = 0.0f;
+        _dotFixture = body->CreateFixture(&fixtureDef);
         
-        CCNode *parent = [self getChildByTag:kTagParentNode];
-    
-        int idx = (CCRANDOM_0_1() > .5 ? 0:1);
-        int idy = (CCRANDOM_0_1() > .5 ? 0:1);
-        CCPhysicsSprite *sprite = [CCPhysicsSprite spriteWithTexture:spriteTexture_ rect:CGRectMake(32 * idx,32 * idy,100,100)];
-        [parent addChild:sprite];
-
+        CCPhysicsSprite *sprite = [CCPhysicsSprite spriteWithFile:@"Step2.png" rect:CGRectMake(0,0,30,30)];
+        [self addChild:sprite];
+        
         [sprite setPTMRatio:PTM_RATIO];
         [sprite setB2Body:body];
         [sprite setPosition: ccp( 200, 200)];
-        
-        CCSprite* s = [CCSprite spriteWithFile:@"images.png" rect:CGRectMake(0,0,100,100)];
-        [self addChild: s];
-        [self moveRandom:s];
 		[self scheduleUpdate];
 	}
 	return self;
@@ -113,7 +140,6 @@ enum {
 -(void) initPhysics
 {
 	CGSize s = [[CCDirector sharedDirector] winSize];
-    NSLog(@"%f ============== %f",s.width,s.height);
 	b2Vec2 gravity;
 	gravity.Set(0.0f, -0.0f);
 	world = new b2World(gravity);
@@ -129,10 +155,6 @@ enum {
 	
 	uint32 flags = 0;
 	flags += b2Draw::e_shapeBit;
-	//		flags += b2Draw::e_jointBit;
-	//		flags += b2Draw::e_aabbBit;
-	//		flags += b2Draw::e_pairBit;
-	//		flags += b2Draw::e_centerOfMassBit;
 	m_debugDraw->SetFlags(flags);		
 	
 	
@@ -168,11 +190,6 @@ enum {
 
 -(void) draw
 {
-	//
-	// IMPORTANT:
-	// This is only for debug purposes
-	// It is recommend to disable it
-	//
 	[super draw];
 	
 	ccGLEnableVertexAttribs( kCCVertexAttribFlag_Position );
@@ -187,8 +204,6 @@ enum {
 -(void)moveRandom:(CCSprite*)s
 {
     CGPoint randomPoint = ccp(arc4random()%568, arc4random()%320);
-    NSLog(@"%@", NSStringFromCGPoint(randomPoint));
-    
     [s runAction:
      [CCSequence actions:
       [CCMoveTo actionWithDuration:0.9 position: randomPoint],
@@ -203,9 +218,17 @@ enum {
 {
     int32 velocityIterations = 8;
 	int32 positionIterations = 1;
-	
-	// Instruct the world to perform a single step of simulation. It is
-	// generally best to keep the time step and iterations fixed.
+
+    std::vector<MyContact>::iterator pos;
+    for(pos = _contactListener->_contacts.begin();
+        pos != _contactListener->_contacts.end(); ++pos) {
+        MyContact contact = *pos;
+        
+        if ((contact.fixtureA == _dotFixture && contact.fixtureB == _ballFixture) ||
+            (contact.fixtureA == _ballFixture && contact.fixtureB == _dotFixture)) {
+            NSLog(@"Ball hit bottom!");
+        }
+    }
 	world->Step(dt, velocityIterations, positionIterations);	
 }
 
@@ -221,7 +244,7 @@ enum {
     
     // accelerometer values are in "Portrait" mode. Change them to Landscape left
     // multiply the gravity by 10
-    b2Vec2 gravity( acceleration.y  * 10, -acceleration.x  * 10);
+    b2Vec2 gravity( acceleration.y  * 50, -acceleration.x  * 50);
     
     world->SetGravity( gravity );
 }
