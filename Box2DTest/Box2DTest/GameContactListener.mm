@@ -1,12 +1,12 @@
 //
-//  MyContactListener.m
-//  Box2DPong
+//  GameContactListener.m
+//  Box2DTest
 //
-//  Created by Ray Wenderlich on 2/18/10.
-//  Copyright 2010 Ray Wenderlich. All rights reserved.
+//  Created by aliya on 30/03/15.
+//  Copyright (c) 2015 QBurst. All rights reserved.
 //
 
-#import "MyContactListener.h"
+#import "GameContactListener.h"
 
 MyContactListener::MyContactListener() : _contacts() {
 }
@@ -35,4 +35,3 @@ void MyContactListener::PreSolve(b2Contact* contact, const b2Manifold* oldManifo
 
 void MyContactListener::PostSolve(b2Contact* contact, const b2ContactImpulse* impulse) {
 }
-

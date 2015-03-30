@@ -1,11 +1,10 @@
 //
-//  HelloWorldLayer.h
+//  GameMainSceneLayer.h
 //  Box2DTest
 //
-//  Created by aliya on 25/03/15.
-//  Copyright QBurst 2015. All rights reserved.
+//  Created by aliya on 30/03/15.
+//  Copyright (c) 2015 QBurst. All rights reserved.
 //
-
 
 #import <GameKit/GameKit.h>
 
@@ -13,6 +12,7 @@
 #import "cocos2d.h"
 #import "Box2D.h"
 #import "GLES-Render.h"
+#import "GameOverSceneLayer.h"
 
 //Pixel to metres ratio. Box2D uses metres as the unit for measurement.
 //This ratio defines how many pixels correspond to 1 Box2D "metre"
@@ -22,15 +22,13 @@
 
 // HelloWorldLayer
 
-@interface HelloWorldLayer : CCLayer <GKGameCenterControllerDelegate>
+@interface GameMainSceneLayer : CCLayer <GKGameCenterControllerDelegate>
 {
-	CCTexture2D *spriteTexture_;	// weak ref
-	b2World* world;					// strong ref
-	GLESDebugDraw *m_debugDraw;
-    b2World *_world;
-    b2Body *_body;
+    b2World* world;					// strong ref
+    GLESDebugDraw *m_debugDraw;
 }
 // returns a CCScene that contains the HelloWorldLayer as the only child
 +(CCScene *) scene;
+
 
 @end
