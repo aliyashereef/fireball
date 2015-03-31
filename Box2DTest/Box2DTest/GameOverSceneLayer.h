@@ -10,7 +10,7 @@
 
 @interface GameOverSceneLayer : CCLayer
 
-+(CCScene *) sceneWithWon:(BOOL)won;
-- (id)initWithWon:(BOOL)won;
++(CCScene *) sceneWithWon:(BOOL)won withScore:(int)score;
+- (id)initWithWon:(BOOL)won withScore:(int)score;
 
 @end

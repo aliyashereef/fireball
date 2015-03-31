@@ -11,28 +11,32 @@
 
 @implementation GameOverSceneLayer
 
-+(CCScene *) sceneWithWon:(BOOL)won {
++(CCScene *) sceneWithWon:(BOOL)won withScore:(int)score{
     CCScene *scene = [CCScene node];
-    GameOverSceneLayer *layer = [[[GameOverSceneLayer alloc] initWithWon:won] autorelease];
+    GameOverSceneLayer *layer = [[[GameOverSceneLayer alloc] initWithWon:won withScore:score] autorelease];
     [scene addChild: layer];
     
     return scene;
 }
 
-- (id)initWithWon:(BOOL)won {
+- (id)initWithWon:(BOOL)won withScore:(int)score{
     if ((self=[super init])) {
         
         NSString * message;
         if (won) {
             message = @"You Won!";
         } else {
-            message = @"You Lose ";
+            message = @"Game Over";
         }
         
         CGSize winSize = [[CCDirector sharedDirector] winSize];
         CCLabelTTF * label = [CCLabelTTF labelWithString:message fontName:@"Arial" fontSize:32];
+        CCLabelTTF * scoreLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Score : %d ",score] fontName:@"Arial" fontSize:32];
         label.color = ccc3(255,255,255);
-        label.position = ccp(winSize.width/2, 500);
+        scoreLabel.color = ccc3(255,255,255);
+        scoreLabel.position = ccp(winSize.width/2, 500);
+        label.position = ccp(winSize.width/2, 450);
+        [self addChild:scoreLabel];
         [self addChild:label];
         [self createMenu];
     }
