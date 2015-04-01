@@ -11,31 +11,24 @@
 
 @implementation GameOverSceneLayer
 
-+(CCScene *) sceneWithWon:(BOOL)won withScore:(int)score{
++(CCScene *) sceneWithWon:(NSString *)message withScore:(int)score{
     CCScene *scene = [CCScene node];
-    GameOverSceneLayer *layer = [[[GameOverSceneLayer alloc] initWithWon:won withScore:score] autorelease];
+    GameOverSceneLayer *layer = [[[GameOverSceneLayer alloc] initWithWon:message withScore:score] autorelease];
     [scene addChild: layer];
     
     return scene;
 }
 
-- (id)initWithWon:(BOOL)won withScore:(int)score{
+- (id)initWithWon:(NSString *)message withScore:(int)score{
     if ((self=[super init])) {
         
-        NSString * message;
-        if (won) {
-            message = @"You Won!";
-        } else {
-            message = @"Game Over";
-        }
-        
         CGSize winSize = [[CCDirector sharedDirector] winSize];
-        CCLabelTTF * label = [CCLabelTTF labelWithString:message fontName:@"Arial" fontSize:32];
+        CCLabelTTF * label = [CCLabelTTF labelWithString:message fontName:@"Arial" fontSize:34];
         CCLabelTTF * scoreLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Score : %d ",score] fontName:@"Arial" fontSize:32];
-        label.color = ccc3(255,255,255);
+        label.color = ccc3(255,50,0);
         scoreLabel.color = ccc3(255,255,255);
-        scoreLabel.position = ccp(winSize.width/2, 500);
-        label.position = ccp(winSize.width/2, 450);
+        scoreLabel.position = ccp(winSize.width/2, 400);
+        label.position = ccp(winSize.width/2, 300);
         [self addChild:scoreLabel];
         [self addChild:label];
         [self createMenu];
@@ -52,17 +45,13 @@
     CCMenuItemLabel *reset = [CCMenuItemFont itemWithString:@"Play Again" block:^(id sender){
         [[CCDirector sharedDirector] replaceScene: [GameMainSceneLayer scene]];
     }];
-    CCMenuItemLabel *leaderBoard = [CCMenuItemFont itemWithString:@"Leader Board" block:^(id sender){
-    }];
-
     
-    
-    CCMenu *menu = [CCMenu menuWithItems:leaderBoard, reset, nil];
+    CCMenu *menu = [CCMenu menuWithItems:reset, nil];
     
     [menu alignItemsVertically];
     
     CGSize size = [[CCDirector sharedDirector] winSize];
-    [menu setPosition:ccp( size.width/2, size.height/2)];
+    [menu setPosition:ccp( size.width/2, size.height/3)];
     [self addChild: menu z:-1];
 }
 

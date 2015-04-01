@@ -23,16 +23,18 @@
     b2Fixture *_rightEdgeFixture;
 
     MyContactListener *_contactListener;
-    b2Body *dotBody;
     CCProgressTimer *lifeBar;
     
     CCLabelTTF *scoreNode;
     CCLabelTTF *timeNode;
+    
     int score;
     int timeCount;
     int dotTag;
     int lifeLeft;
+    int destroyedSpriteTag;
     CGSize screenSize;
+    BOOL boxContactBody;
     
     NSTimer *updateTimer;
     NSTimer *dotLifeTimer;
@@ -73,7 +75,7 @@
         dotTag = 1000;
         lifeLeft = 5;
         
-        updateTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(updateTime) userInfo:nil repeats:YES];
+        updateTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(updateTime) userInfo:nil repeats:YES];
         dotLifeTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(updateDotLifeTime) userInfo:nil repeats:YES];
         deleteDotTimer = [NSTimer scheduledTimerWithTimeInterval:7 target:self selector:@selector(deleteDot) userInfo:nil repeats:YES];
         
@@ -170,6 +172,11 @@
 }
 
 -(void)updateTime{
+    if (boxContactBody) {
+        lifeLeft--;
+        boxContactBody = NO;
+        [lifeBar setPercentage:20*lifeLeft];
+    }
    for(b2Body *b = world->GetBodyList(); b != NULL; b = b->GetNext()) {
             if (b->GetUserData() != NULL ) {
                 CCSprite *sprite = (CCSprite *) b->GetUserData();
@@ -180,9 +187,9 @@
     }
     timeNode.string = [NSString stringWithFormat:@" %d ",timeCount];
     timeCount++;
-    if (timeCount == 30) {
+    if (timeCount == 120) {
         [self invalidateAllTimers];
-        CCScene *gameOverScene = [GameOverSceneLayer sceneWithWon:NO withScore:score];
+        CCScene *gameOverScene = [GameOverSceneLayer sceneWithWon:@"Time Out" withScore:score];
         [[CCDirector sharedDirector] replaceScene:gameOverScene];
     }
 }
@@ -191,18 +198,21 @@
         if (b->GetUserData() != NULL ) {
             CCSprite *sprite = (CCSprite *) b->GetUserData();
             if (sprite.tag >= 1000) {
-               world->DestroyBody( b );
-                lifeLeft--;
-                [lifeBar setPercentage:20*lifeLeft];
-                [self removeChild:sprite cleanup:YES];
+                NSLog(@"%d",sprite.tag);
+                [sprite setColor:ccc3(255,50,0)];
+                double delayInSeconds = 3.0;
+                dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+                dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+                    if (sprite.tag != destroyedSpriteTag ) {
+                        world->DestroyBody( b );
+                        lifeLeft--;
+                        [lifeBar setPercentage:20*lifeLeft];
+                        [self removeChild:sprite cleanup:YES];
+                    }
+                });
                 break;
             }
         }
-    }
-    if (lifeLeft == 0) {
-        [self invalidateAllTimers];
-        CCScene *gameOverScene = [GameOverSceneLayer sceneWithWon:NO withScore:score];
-        [[CCDirector sharedDirector] replaceScene:gameOverScene];
     }
 }
 - (void)updateDotLifeTime{
@@ -210,10 +220,21 @@
     [self createDotAtLocation:ccp(50 , 50) withSize:CGSizeMake(10, 10) withTag:dotTag];
 }
 
+- (void)endTheGame {
+    [self invalidateAllTimers];
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.5 * NSEC_PER_SEC));
+    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+        NSString *message = [self updateHighScoreWithScore:score];
+        CCScene *gameOverScene = [GameOverSceneLayer sceneWithWon:message withScore:score];
+        [[CCDirector sharedDirector] replaceScene:gameOverScene];
+    });
+}
+
 - (void)randomMotion {
+    
     b2Vec2 velocity = _dotFixture->GetBody()->GetLinearVelocity();
     float speed = velocity.Length();
-    float ratio = 7 / speed;
+    float ratio = 10 / speed;
     velocity*=ratio;
     _dotFixture->GetBody()->SetLinearVelocity(velocity);
 }
@@ -239,6 +260,17 @@
     if (deleteDotTimer) {
         [deleteDotTimer invalidate];
         deleteDotTimer = nil;
+    }
+}
+
+- (NSString *)updateHighScoreWithScore:(int)highScore{
+    NSNumber *savedScore = [[NSUserDefaults standardUserDefaults] objectForKey:@"High Score"];
+    if ( highScore > [savedScore intValue]) {
+        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:highScore] forKey:@"High Score !"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        return @"High Score";
+    }else{
+        return @"Game Over";
     }
 }
 
@@ -270,6 +302,7 @@
 }
 
 - (void)createBlockAtLocation:(CGPoint)location withSize:(CGSize)size {
+    boxContactBody = NO;
     // Create block and add it to the layer
     CCSprite *block = [CCSprite spriteWithFile:@"Step2.png"];
     block.position = ccp(location.x/PTM_RATIO, location.y/PTM_RATIO);
@@ -300,18 +333,12 @@
     
     std::vector<b2Body *>toDestroy;
     std::vector<MyContact>::iterator pos;
+    
     for(pos = _contactListener->_contacts.begin();
         pos != _contactListener->_contacts.end(); ++pos) {
+    
         MyContact contact = *pos;
-        if((contact.fixtureA == _bottomFixture && contact.fixtureB == _ballFixture) ||
-           (contact.fixtureA == _topFixture && contact.fixtureB == _ballFixture)||
-           (contact.fixtureA == _rightEdgeFixture && contact.fixtureB == _ballFixture) ||
-           (contact.fixtureA == _leftEdgeFixture && contact.fixtureB == _ballFixture))
-        {
-            [self invalidateAllTimers];
-            CCScene *gameOverScene = [GameOverSceneLayer sceneWithWon:NO withScore:score];
-            [[CCDirector sharedDirector] replaceScene:gameOverScene];
-        }
+        
         b2Body *bodyA = contact.fixtureA->GetBody();
         b2Body *bodyB = contact.fixtureB->GetBody();
         if (bodyA->GetUserData() != NULL && bodyB->GetUserData() != NULL) {
@@ -319,13 +346,24 @@
             CCSprite *spriteB = (CCSprite *) bodyB->GetUserData();
             if (spriteA.tag >= 1000 && spriteB.tag == 2) {
                 toDestroy.push_back(bodyA);
+                destroyedSpriteTag = spriteA.tag;
                 [self updateLevel];
             } else if (spriteA.tag == 2 && spriteB.tag >= 1000) {
                 toDestroy.push_back(bodyB);
+                destroyedSpriteTag = spriteB.tag;
                 [self updateLevel];
             }
         }
+
+        if((contact.fixtureA == _bottomFixture && contact.fixtureB == _ballFixture) ||
+           (contact.fixtureA == _topFixture && contact.fixtureB == _ballFixture)||
+           (contact.fixtureA == _rightEdgeFixture && contact.fixtureB == _ballFixture) ||
+           (contact.fixtureA == _leftEdgeFixture && contact.fixtureB == _ballFixture))
+        {
+            boxContactBody = YES;
+        }
     }
+    
     std::vector<b2Body *>::iterator pos2;
     for(pos2 = toDestroy.begin(); pos2 != toDestroy.end(); ++pos2) {
         b2Body *body = *pos2;
@@ -342,6 +380,9 @@
                                   b->GetPosition().y * PTM_RATIO);
             sprite.rotation = CC_RADIANS_TO_DEGREES(b->GetAngle() * -1);
         }
+    }
+    if (lifeLeft == 0) {
+        [self endTheGame];
     }
     world->Step(dt, velocityIterations, positionIterations);
 }
@@ -370,8 +411,6 @@
     
     delete _contactListener;
     _contactListener = NULL;
-    
-    dotBody = NULL;
     
     [super dealloc];
 }	

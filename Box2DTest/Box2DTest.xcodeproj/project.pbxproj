@@ -196,6 +196,7 @@
 		4DAA84101AC98C360035ED90 /* GameContactListener.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4DAA840F1AC98C360035ED90 /* GameContactListener.mm */; };
 		4DAA84141ACAB3A80035ED90 /* DotSprite.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4DAA84131ACAB3A80035ED90 /* DotSprite.mm */; };
 		4DAA84161ACAE79F0035ED90 /* life.png in Resources */ = {isa = PBXBuildFile; fileRef = 4DAA84151ACAE79F0035ED90 /* life.png */; };
+		4DAA84181ACBB4410035ED90 /* dead.png in Resources */ = {isa = PBXBuildFile; fileRef = 4DAA84171ACBB4410035ED90 /* dead.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -588,6 +589,7 @@
 		4DAA84121ACAB3A80035ED90 /* DotSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DotSprite.h; sourceTree = "<group>"; };
 		4DAA84131ACAB3A80035ED90 /* DotSprite.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DotSprite.mm; sourceTree = "<group>"; };
 		4DAA84151ACAE79F0035ED90 /* life.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = life.png; sourceTree = "<group>"; };
+		4DAA84171ACBB4410035ED90 /* dead.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dead.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1216,6 +1218,7 @@
 			children = (
 				4DAA84151ACAE79F0035ED90 /* life.png */,
 				4D06B72D1AC57F3600B7AFF5 /* Step2.png */,
+				4DAA84171ACBB4410035ED90 /* dead.png */,
 				4D06B7281AC5705D00B7AFF5 /* images.png */,
 				4DAA84061AC916900035ED90 /* status.png */,
 			);
@@ -1253,7 +1256,6 @@
 				TargetAttributes = {
 					4D06B01D1AC2ED1D00B7AFF5 = {
 						CreatedOnToolsVersion = 6.1.1;
-						DevelopmentTeam = 5DYFD9UMYF;
 					};
 				};
 			};
@@ -1291,6 +1293,7 @@
 				4D06B04D1AC2ED1D00B7AFF5 /* iTunesArtwork in Resources */,
 				4DAA84071AC916900035ED90 /* status.png in Resources */,
 				4DAA84161ACAE79F0035ED90 /* life.png in Resources */,
+				4DAA84181ACBB4410035ED90 /* dead.png in Resources */,
 				4D06B72E1AC57F3600B7AFF5 /* Step2.png in Resources */,
 				4D06B2661AC2ED1F00B7AFF5 /* blocks.png in Resources */,
 				4D06B0461AC2ED1D00B7AFF5 /* Icon-Small@2x.png in Resources */,
@@ -1518,7 +1521,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: PRATHAPAN SETHUMAPHAVAN (3KHRN2958R)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: PRATHAPAN SETHUMAPHAVAN (3KHRN2958R)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -1548,7 +1551,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: PRATHAPAN SETHUMAPHAVAN (3KHRN2958R)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: PRATHAPAN SETHUMAPHAVAN (3KHRN2958R)";
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
