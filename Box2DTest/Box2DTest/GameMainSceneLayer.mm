@@ -77,7 +77,7 @@
         
         updateTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(updateTime) userInfo:nil repeats:YES];
         dotLifeTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(updateDotLifeTime) userInfo:nil repeats:YES];
-        deleteDotTimer = [NSTimer scheduledTimerWithTimeInterval:7 target:self selector:@selector(deleteDot) userInfo:nil repeats:YES];
+        deleteDotTimer = [NSTimer scheduledTimerWithTimeInterval:8 target:self selector:@selector(deleteDot) userInfo:nil repeats:YES];
         
         // Create contact listener
         _contactListener = new MyContactListener();
@@ -181,7 +181,7 @@
             if (b->GetUserData() != NULL ) {
                 CCSprite *sprite = (CCSprite *) b->GetUserData();
                 if (sprite.tag == 2) {
-                    b->SetLinearDamping(1.0);
+                    b->SetLinearDamping(10.0);
                 }
             }
     }
@@ -200,14 +200,15 @@
             if (sprite.tag >= 1000) {
                 NSLog(@"%d",sprite.tag);
                 [sprite setColor:ccc3(255,50,0)];
-                double delayInSeconds = 3.0;
+                double delayInSeconds = 4.0;
                 dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
                 dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-                    if (sprite.tag != destroyedSpriteTag ) {
+                    if (sprite.tag != destroyedSpriteTag && b->GetUserData() != NULL) {
                         world->DestroyBody( b );
+                        CCSprite *sprite = (CCSprite *) b->GetUserData();
+                        [self removeChild:sprite cleanup:YES];
                         lifeLeft--;
                         [lifeBar setPercentage:20*lifeLeft];
-                        [self removeChild:sprite cleanup:YES];
                     }
                 });
                 break;
@@ -231,7 +232,6 @@
 }
 
 - (void)randomMotion {
-    
     b2Vec2 velocity = _dotFixture->GetBody()->GetLinearVelocity();
     float speed = velocity.Length();
     float ratio = 10 / speed;
@@ -266,9 +266,9 @@
 - (NSString *)updateHighScoreWithScore:(int)highScore{
     NSNumber *savedScore = [[NSUserDefaults standardUserDefaults] objectForKey:@"High Score"];
     if ( highScore > [savedScore intValue]) {
-        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:highScore] forKey:@"High Score !"];
+        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:highScore] forKey:@"High Score"];
         [[NSUserDefaults standardUserDefaults] synchronize];
-        return @"High Score";
+        return @"High Score !";
     }else{
         return @"Game Over";
     }
@@ -391,7 +391,7 @@
 
 - (void)accelerometer:(UIAccelerometer*)accelerometer didAccelerate:(UIAcceleration*)acceleration
 {
-    b2Vec2 gravity( acceleration.x  * 50, acceleration.y  * 50);
+    b2Vec2 gravity( acceleration.x  * 450, acceleration.y  * 450);
     world->SetGravity( gravity );
 }
 

@@ -23,14 +23,19 @@
     if ((self=[super init])) {
         
         CGSize winSize = [[CCDirector sharedDirector] winSize];
-        CCLabelTTF * label = [CCLabelTTF labelWithString:message fontName:@"Arial" fontSize:34];
-        CCLabelTTF * scoreLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Score : %d ",score] fontName:@"Arial" fontSize:32];
+        NSNumber *savedScore = [[NSUserDefaults standardUserDefaults] objectForKey:@"High Score"];
+        CCLabelTTF * label = [CCLabelTTF labelWithString:message fontName:@"Trebuchet MS" fontSize:34];
+        CCLabelTTF * scoreLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"SCORE %d",score] fontName:@"Trebuchet MS" fontSize:32];
+        CCLabelTTF * highScoreLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Top Score %d ",[savedScore integerValue]] fontName:@"Trebuchet MS" fontSize:20];
+        highScoreLabel.color = ccc3(255,255,255);
         label.color = ccc3(255,50,0);
         scoreLabel.color = ccc3(255,255,255);
         scoreLabel.position = ccp(winSize.width/2, 400);
+        highScoreLabel.position =ccp(winSize.width/2, 50);
         label.position = ccp(winSize.width/2, 300);
         [self addChild:scoreLabel];
         [self addChild:label];
+        [self addChild:highScoreLabel];
         [self createMenu];
     }
     return self;
@@ -39,7 +44,7 @@
 {
     // Default font size will be 22 points.
     [CCMenuItemFont setFontSize:22];
-    [CCMenuItemFont setFontName:@"Arial"];
+    [CCMenuItemFont setFontName:@"Trebuchet MS"];
     
     // Reset Button
     CCMenuItemLabel *reset = [CCMenuItemFont itemWithString:@"Play Again" block:^(id sender){
