@@ -207,9 +207,8 @@
                 double delayInSeconds = 4.0;
                 dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
                 dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-                    if ( sprite.tag != destroyedSpriteTag && b->GetUserData() != NULL ) {
+                    if (  b->GetUserData() != NULL ) {
                         [dotsToDestroy addObject:[NSValue valueWithPointer:b]];
-                        //[self removeChild:sprite cleanup:YES];
                         lifeLeft--;
                         [lifeBar setPercentage:20*lifeLeft];
                     }
@@ -348,11 +347,11 @@
             CCSprite *spriteA = (CCSprite *) bodyA->GetUserData();
             CCSprite *spriteB = (CCSprite *) bodyB->GetUserData();
             if (spriteA.tag >= 1000 && spriteB.tag == 2) {
-                destroyedSpriteTag = spriteA.tag;
+//                destroyedSpriteTag = spriteA.tag;
                 [dotsToDestroy addObject:[NSValue valueWithPointer:bodyA]];
                 [self updateLevel];
             } else if (spriteA.tag == 2 && spriteB.tag >= 1000) {
-                destroyedSpriteTag = spriteB.tag;
+//                destroyedSpriteTag = spriteB.tag;
                 [dotsToDestroy addObject:[NSValue valueWithPointer:bodyB]];
                 [self updateLevel];
             }
@@ -367,6 +366,7 @@
         }
     }
     
+    NSMutableArray *dotsToDelete = [NSMutableArray new];
     for(NSValue *bodyValue in dotsToDestroy) {
         b2Body *body = (b2Body*)[bodyValue pointerValue];
         if (body->GetUserData() != NULL) {
@@ -374,9 +374,10 @@
             [self removeChild:sprite cleanup:YES];
             body->SetUserData(NULL);
             world->DestroyBody(body);
-            [dotsToDestroy removeObject:bodyValue] ;
+            [dotsToDelete addObject:bodyValue];
         }
     }
+    [dotsToDestroy removeObjectsInArray:dotsToDelete];
 
     for(b2Body *b = world->GetBodyList(); b != NULL; b = b->GetNext()) {
         if (b->GetUserData() != NULL ) {
