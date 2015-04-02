@@ -11,6 +11,7 @@
 #import "AppDelegate.h"
 #import "GameContactListener.h"
 #include <math.h>
+#import <AudioToolbox/AudioServices.h>
 
 #pragma mark - GameMainSceneLayer
 
@@ -21,9 +22,11 @@
     b2Fixture *_topFixture;
     b2Fixture *_leftEdgeFixture;
     b2Fixture *_rightEdgeFixture;
+    b2Body *blockBody;
 
     MyContactListener *_contactListener;
     CCProgressTimer *lifeBar;
+    NSMutableArray *dotsToDestroy;
     
     CCLabelTTF *scoreNode;
     CCLabelTTF *timeNode;
@@ -67,7 +70,7 @@
         self.touchEnabled = YES;
         self.accelerometerEnabled = YES;
         screenSize=[[CCDirector sharedDirector]winSize];
-        
+        dotsToDestroy = [[NSMutableArray alloc] init];
         // init physics
         [self initPhysics];
         
@@ -174,17 +177,19 @@
 -(void)updateTime{
     if (boxContactBody) {
         lifeLeft--;
+        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
         boxContactBody = NO;
         [lifeBar setPercentage:20*lifeLeft];
     }
-   for(b2Body *b = world->GetBodyList(); b != NULL; b = b->GetNext()) {
-            if (b->GetUserData() != NULL ) {
-                CCSprite *sprite = (CCSprite *) b->GetUserData();
-                if (sprite.tag == 2) {
-                    b->SetLinearDamping(10.0);
-                }
-            }
-    }
+     blockBody->SetLinearDamping(10.0);
+//   for(b2Body *b = world->GetBodyList(); b != NULL; b = b->GetNext()) {
+//            if (b->GetUserData() != NULL ) {
+//                CCSprite *sprite = (CCSprite *) b->GetUserData();
+//                if (sprite.tag == 2) {
+//                   
+//                }
+//            }
+//    }
     timeNode.string = [NSString stringWithFormat:@" %d ",timeCount];
     timeCount++;
     if (timeCount == 120) {
@@ -198,15 +203,13 @@
         if (b->GetUserData() != NULL ) {
             CCSprite *sprite = (CCSprite *) b->GetUserData();
             if (sprite.tag >= 1000) {
-                NSLog(@"%d",sprite.tag);
                 [sprite setColor:ccc3(255,50,0)];
                 double delayInSeconds = 4.0;
                 dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
                 dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-                    if (sprite.tag != destroyedSpriteTag && b->GetUserData() != NULL) {
-                        world->DestroyBody( b );
-                        CCSprite *sprite = (CCSprite *) b->GetUserData();
-                        [self removeChild:sprite cleanup:YES];
+                    if ( sprite.tag != destroyedSpriteTag && b->GetUserData() != NULL ) {
+                        [dotsToDestroy addObject:[NSValue valueWithPointer:b]];
+                        //[self removeChild:sprite cleanup:YES];
                         lifeLeft--;
                         [lifeBar setPercentage:20*lifeLeft];
                     }
@@ -241,6 +244,7 @@
 
 - (void)updateLevel {
     score++;
+    AudioServicesPlaySystemSound(1005);
     AppController *controller = [[UIApplication sharedApplication] delegate];
     controller.gameLevel = [NSNumber numberWithInt:score+1];
     [scoreNode setString:[NSString stringWithFormat:@" %d ", score]];
@@ -314,13 +318,13 @@
     bodyDef2.allowSleep = false ;
     bodyDef2.userData = block;
     bodyDef2.position = b2Vec2(location.x/PTM_RATIO,location.y/PTM_RATIO);
-    b2Body *body2 = world->CreateBody(&bodyDef2);
+    blockBody = world->CreateBody(&bodyDef2);
     b2PolygonShape shape2;
     shape2.SetAsBox(0.5f, 0.5f);
     b2FixtureDef fixtureDef2;
     fixtureDef2.shape = &shape2;
     fixtureDef2.density = 50.0;
-    _ballFixture = body2->CreateFixture(&fixtureDef2);
+    _ballFixture = blockBody->CreateFixture(&fixtureDef2);
 }
 
 #pragma mark - Update Methods
@@ -331,7 +335,6 @@
     int32 velocityIterations = 8;
     int32 positionIterations = 1;
     
-    std::vector<b2Body *>toDestroy;
     std::vector<MyContact>::iterator pos;
     
     for(pos = _contactListener->_contacts.begin();
@@ -345,12 +348,12 @@
             CCSprite *spriteA = (CCSprite *) bodyA->GetUserData();
             CCSprite *spriteB = (CCSprite *) bodyB->GetUserData();
             if (spriteA.tag >= 1000 && spriteB.tag == 2) {
-                toDestroy.push_back(bodyA);
                 destroyedSpriteTag = spriteA.tag;
+                [dotsToDestroy addObject:[NSValue valueWithPointer:bodyA]];
                 [self updateLevel];
             } else if (spriteA.tag == 2 && spriteB.tag >= 1000) {
-                toDestroy.push_back(bodyB);
                 destroyedSpriteTag = spriteB.tag;
+                [dotsToDestroy addObject:[NSValue valueWithPointer:bodyB]];
                 [self updateLevel];
             }
         }
@@ -364,15 +367,16 @@
         }
     }
     
-    std::vector<b2Body *>::iterator pos2;
-    for(pos2 = toDestroy.begin(); pos2 != toDestroy.end(); ++pos2) {
-        b2Body *body = *pos2;
+    for(NSValue *bodyValue in dotsToDestroy) {
+        b2Body *body = (b2Body*)[bodyValue pointerValue];
         if (body->GetUserData() != NULL) {
             CCSprite *sprite = (CCSprite *) body->GetUserData();
             [self removeChild:sprite cleanup:YES];
+            world->DestroyBody(body);
+            [dotsToDestroy removeObject:bodyValue] ;
         }
-        world->DestroyBody(body);
     }
+
     for(b2Body *b = world->GetBodyList(); b != NULL; b = b->GetNext()) {
         if (b->GetUserData() != NULL ) {
             CCSpriteBatchNode *sprite = (CCSpriteBatchNode *) b->GetUserData();
@@ -384,7 +388,13 @@
     if (lifeLeft == 0) {
         [self endTheGame];
     }
-    world->Step(dt, velocityIterations, positionIterations);
+    @try {
+         world->Step(dt, velocityIterations, positionIterations);
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Exception:%@",exception);
+    }
+   
 }
 
 #pragma mark - Accelerometer Delegate Methods
