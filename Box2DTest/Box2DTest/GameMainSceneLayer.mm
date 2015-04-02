@@ -372,6 +372,7 @@
         if (body->GetUserData() != NULL) {
             CCSprite *sprite = (CCSprite *) body->GetUserData();
             [self removeChild:sprite cleanup:YES];
+            body->SetUserData(NULL);
             world->DestroyBody(body);
             [dotsToDestroy removeObject:bodyValue] ;
         }
