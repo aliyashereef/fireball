@@ -18,17 +18,16 @@
 //This ratio defines how many pixels correspond to 1 Box2D "metre"
 //Box2D is optimized for objects of 1x1 metre therefore it makes sense
 //to define the ratio so that your most common object type is 1x1 metre.
+
 #define PTM_RATIO 32
 
-// HelloWorldLayer
-
-@interface GameMainSceneLayer : CCLayer <GKGameCenterControllerDelegate>
+@interface GameMainSceneLayer : CCLayer
 {
-    b2World* world;					// strong ref
+    b2World* world;
     GLESDebugDraw *m_debugDraw;
 }
+
 // returns a CCScene that contains the HelloWorldLayer as the only child
 +(CCScene *) scene;
-
 
 @end

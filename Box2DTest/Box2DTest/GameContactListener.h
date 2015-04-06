@@ -10,22 +10,22 @@
 #import <vector>
 #import <algorithm>
 
-struct MyContact {
+struct DotContact {
     b2Fixture *fixtureA;
     b2Fixture *fixtureB;
-    bool operator==(const MyContact& other) const
+    bool operator==(const DotContact& other) const
     {
         return (fixtureA == other.fixtureA) && (fixtureB == other.fixtureB);
     }
 };
 
-class MyContactListener : public b2ContactListener {
+class BlockContactListener : public b2ContactListener {
     
 public:
-    std::vector<MyContact>_contacts;
+    std::vector<DotContact>_contacts;
     
-    MyContactListener();
-    ~MyContactListener();
+    BlockContactListener();
+    ~BlockContactListener();
     
     virtual void BeginContact(b2Contact* contact);
     virtual void EndContact(b2Contact* contact);
