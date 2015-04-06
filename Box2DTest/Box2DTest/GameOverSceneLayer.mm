@@ -8,6 +8,7 @@
 
 #import "GameOverSceneLayer.h"
 #import "GameMainSceneLayer.h"
+#import "IntroLayer.h"
 
 @implementation GameOverSceneLayer
 
@@ -48,7 +49,7 @@
     
     // Reset Button
     CCMenuItemLabel *reset = [CCMenuItemFont itemWithString:@"Play Again" block:^(id sender){
-        [[CCDirector sharedDirector] replaceScene: [GameMainSceneLayer scene]];
+        [[CCDirector sharedDirector] replaceScene:[IntroLayer scene]];
     }];
     
     CCMenu *menu = [CCMenu menuWithItems:reset, nil];

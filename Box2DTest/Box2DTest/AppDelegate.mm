@@ -12,7 +12,6 @@
 #import "IntroLayer.h"
 
 @implementation MyNavigationController
-
 // The available orientations should be defined in the Info.plist file.
 // And in iOS 6+ only, you can override it in the Root View controller in the "supportedInterfaceOrientations" method.
 // Only valid for iOS 6+. NOT VALID for iOS 4 / 5.
@@ -55,13 +54,12 @@
 
 @implementation AppController
 
-@synthesize window=window_, navController=navController_, director=director_,gameLevel = _gameLevel;
+@synthesize window=window_, navController=navController_, director=director_;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
 	// Create the main window
 	window_ = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    _gameLevel = [[NSNumber alloc] init];
 	
 	// CCGLView creation
 	// viewWithFrame: size of the OpenGL view. For full screen use [_window bounds]
@@ -154,7 +152,7 @@
 {
 	[[CCDirector sharedDirector] setNextDeltaTimeZero:YES];
 	if( [navController_ visibleViewController] == director_ )
-		[director_ resume];
+        [director_ resume];
 }
 
 -(void) applicationDidEnterBackground:(UIApplication*)application
@@ -187,6 +185,8 @@
 	[[CCDirector sharedDirector] setNextDeltaTimeZero:YES];
 }
 
+- (void)showInitialCounter {
+}
 - (void) dealloc
 {
 	[window_ release];

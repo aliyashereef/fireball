@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4D0632421AD1B23A006FE1A0 /* bonus.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D0632411AD1B23A006FE1A0 /* bonus.png */; };
+		4D0632441AD1E105006FE1A0 /* edge.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D0632431AD1E105006FE1A0 /* edge.png */; };
 		4D06B0221AC2ED1D00B7AFF5 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D06B0211AC2ED1D00B7AFF5 /* QuartzCore.framework */; };
 		4D06B0241AC2ED1D00B7AFF5 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D06B0231AC2ED1D00B7AFF5 /* OpenGLES.framework */; };
 		4D06B0261AC2ED1D00B7AFF5 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D06B0251AC2ED1D00B7AFF5 /* OpenAL.framework */; };
@@ -200,6 +202,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4D0632411AD1B23A006FE1A0 /* bonus.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bonus.png; sourceTree = "<group>"; };
+		4D0632431AD1E105006FE1A0 /* edge.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = edge.png; sourceTree = "<group>"; };
 		4D06B01E1AC2ED1D00B7AFF5 /* Box2DTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Box2DTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D06B0211AC2ED1D00B7AFF5 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		4D06B0231AC2ED1D00B7AFF5 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -1216,7 +1220,9 @@
 		4DAA84111AC98D400035ED90 /* Sprites */ = {
 			isa = PBXGroup;
 			children = (
+				4D0632431AD1E105006FE1A0 /* edge.png */,
 				4DAA84151ACAE79F0035ED90 /* life.png */,
+				4D0632411AD1B23A006FE1A0 /* bonus.png */,
 				4D06B72D1AC57F3600B7AFF5 /* Step2.png */,
 				4DAA84171ACBB4410035ED90 /* dead.png */,
 				4D06B7281AC5705D00B7AFF5 /* images.png */,
@@ -1281,8 +1287,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4D0632421AD1B23A006FE1A0 /* bonus.png in Resources */,
 				4D06B4C61AC3E2B400B7AFF5 /* images.png in Resources */,
 				4D06B0481AC2ED1D00B7AFF5 /* Icon.png in Resources */,
+				4D0632441AD1E105006FE1A0 /* edge.png in Resources */,
 				4D06B1A61AC2ED1E00B7AFF5 /* ChangeLog in Resources */,
 				4D06B03A1AC2ED1D00B7AFF5 /* Default@2x.png in Resources */,
 				4D06B0441AC2ED1D00B7AFF5 /* Icon-Small.png in Resources */,
@@ -1481,7 +1489,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Srijith V (DUJ4E736B8)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -1492,7 +1500,8 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				PROVISIONING_PROFILE = "dd56844a-9ac1-48a6-9932-0adb4278bb81";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -1502,7 +1511,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Srijith V (DUJ4E736B8)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					NDEBUG,
@@ -1511,7 +1520,8 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				PROVISIONING_PROFILE = "dd56844a-9ac1-48a6-9932-0adb4278bb81";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 1;
 			};

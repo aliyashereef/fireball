@@ -17,11 +17,11 @@
 {
 	UIWindow *window_;
 	MyNavigationController *navController_;
-    NSNumber *_gameLevel;
-	CCDirectorIOS	*director_;						
+	CCDirectorIOS	*director_;
+    CCLabelTTF *startUpTimeNode;
 }
 
-@property (nonatomic, strong) NSNumber *gameLevel;
+//@property (nonatomic, strong) NSNumber *gameLevel;
 @property (nonatomic, retain) UIWindow *window;
 @property (readonly) MyNavigationController *navController;
 @property (readonly) CCDirectorIOS *director;

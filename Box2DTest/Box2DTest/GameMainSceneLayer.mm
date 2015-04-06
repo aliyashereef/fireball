@@ -25,24 +25,26 @@
     b2Body *blockBody;
 
     MyContactListener *_contactListener;
-    CCProgressTimer *lifeBar;
+    CCProgressTimer *lifeBar;CCProgressTimer *timerBar;
     NSMutableArray *dotsToDestroy;
     
     CCLabelTTF *scoreNode;
     CCLabelTTF *timeNode;
     
     int score;
+    int ballHit;
     int timeCount;
     int dotTag;
     int lifeLeft;
-    int destroyedSpriteTag;
+    int bonusBallCatched;
     CGSize screenSize;
     BOOL boxContactBody;
     
     NSTimer *updateTimer;
     NSTimer *dotLifeTimer;
     NSTimer *deleteDotTimer;
-
+    NSTimer *bonusBallTimer;
+    NSTimer *startUpTimer;
 }
 
 -(void) initPhysics;
@@ -74,13 +76,16 @@
         // init physics
         [self initPhysics];
         
-        timeCount = 0;
+        timeCount = 60;
         dotTag = 1000;
         lifeLeft = 5;
-        
-        updateTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(updateTime) userInfo:nil repeats:YES];
+        bonusBallCatched = 0;
+
+        updateTimer = [NSTimer scheduledTimerWithTimeInterval:2 target:self selector:@selector(UpdateBasicTimer) userInfo:nil repeats:YES];
         dotLifeTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(updateDotLifeTime) userInfo:nil repeats:YES];
         deleteDotTimer = [NSTimer scheduledTimerWithTimeInterval:8 target:self selector:@selector(deleteDot) userInfo:nil repeats:YES];
+        bonusBallTimer = [NSTimer scheduledTimerWithTimeInterval:6 target:self selector:@selector(createBonusBall) userInfo:nil repeats:YES];
+
         
         // Create contact listener
         _contactListener = new MyContactListener();
@@ -88,7 +93,8 @@
         [self createScoreBar];
         [self createLifeBar];
         [self createBlockAtLocation:ccp(screenSize.width/2,screenSize.height/2) withSize:CGSizeMake(10, 10)];
-        [self createDotAtLocation:ccp(50 , 50) withSize:CGSizeMake(10, 10) withTag:dotTag];
+        double randomNumber = arc4random()%1;
+        [self createDotAtLocation:ccp(screenSize.width* randomNumber,screenSize.height * randomNumber) withSize:CGSizeMake(10, 10) withTag:dotTag andSprite:[CCSprite spriteWithFile:@"images.png"]];
         [self scheduleUpdate];
         [self schedule:@selector(randomMotion) interval:.1];
     }
@@ -110,13 +116,16 @@
     uint32 flags = 0;
     flags += b2Draw::e_shapeBit;
     m_debugDraw->SetFlags(flags);
+//    CCSprite *image = [CCSprite spriteWithFile:@"edge.png"];
+//    image.position = ccp(0/PTM_RATIO, 0/PTM_RATIO);
+//    image.tag = 50;
+//    [self addChild:image];
     
     // Define the ground body.
     b2BodyDef groundBodyDef;
-    groundBodyDef.position.Set(0, 0); // bottom-left corner
-    
+    groundBodyDef.position.Set(0, 0);// bottom-left corner
+    //groundBodyDef.userData =  image;
     b2Body* groundBody = world->CreateBody(&groundBodyDef);
-    
     // Define the ground box shape.
     b2EdgeShape groundBox;
     
@@ -165,36 +174,37 @@
     scoreBar.tag = 3;
     [self addChild:scoreBar];
     
-    scoreNode = [CCLabelTTF labelWithString:[NSString stringWithFormat:@" %d ",score] fontName:@"Arial" fontSize:30.0 ];
+    scoreNode = [CCLabelTTF labelWithString:[NSString stringWithFormat:@" %d ",ballHit] fontName:@"Arial" fontSize:30.0 ];
     scoreNode.position = ccp(screenSize.width*0.90,screenSize.height*0.93);
     [self addChild:scoreNode z:99];
     
-    timeNode = [CCLabelTTF labelWithString:[NSString stringWithFormat:@" %d ",score] fontName:@"Arial" fontSize:30.0 ];
-    timeNode.position = ccp(screenSize.width*0.10,screenSize.height*0.93);
-    [self addChild:timeNode z:100];
+    timerBar=[CCProgressTimer progressWithSprite:[CCSprite spriteWithFile:@"images.png"]];
+    timerBar.type=kCCProgressTimerTypeRadial;
+    timerBar.position=ccp(screenSize.width*0.10,screenSize.height*0.93);
+    timerBar.percentage = 100;
+    [self addChild:timerBar z:99];
 }
 
--(void)updateTime{
+-(void)UpdateBasicTimer{
     if (boxContactBody) {
         lifeLeft--;
-        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+        AudioServicesPlaySystemSound (kSystemSoundID_Vibrate);
         boxContactBody = NO;
-        [lifeBar setPercentage:20*lifeLeft];
     }
      blockBody->SetLinearDamping(10.0);
-//   for(b2Body *b = world->GetBodyList(); b != NULL; b = b->GetNext()) {
-//            if (b->GetUserData() != NULL ) {
-//                CCSprite *sprite = (CCSprite *) b->GetUserData();
-//                if (sprite.tag == 2) {
-//                   
-//                }
-//            }
-//    }
+    timerBar.percentage=1.6777*timeCount;
+
     timeNode.string = [NSString stringWithFormat:@" %d ",timeCount];
-    timeCount++;
-    if (timeCount == 120) {
+    timeCount--;
+    if (timeCount == 0) {
         [self invalidateAllTimers];
-        CCScene *gameOverScene = [GameOverSceneLayer sceneWithWon:@"Time Out" withScore:score];
+        score = (60 - (timeCount/10))*3 + 10 + ballHit - ((5 - lifeLeft)*10) + (bonusBallCatched*50);
+        NSString *message = [self updateHighScoreWithScore:score];
+        if (![message isEqualToString:@"High Score !"]) {
+            message = @"Time Out";
+        }
+
+        CCScene *gameOverScene = [GameOverSceneLayer sceneWithWon:message withScore:score];
         [[CCDirector sharedDirector] replaceScene:gameOverScene];
     }
 }
@@ -210,7 +220,6 @@
                     if (  b->GetUserData() != NULL ) {
                         [dotsToDestroy addObject:[NSValue valueWithPointer:b]];
                         lifeLeft--;
-                        [lifeBar setPercentage:20*lifeLeft];
                     }
                 });
                 break;
@@ -218,13 +227,34 @@
         }
     }
 }
+- (void)createBonusBall {
+    if ( lifeLeft < 5 ) {
+        [self createDotAtLocation:ccp(50 , 50) withSize:CGSizeMake(10, 10) withTag:500 andSprite:[CCSprite spriteWithFile:@"bonus.png"]];
+    }
+    for(b2Body *b = world->GetBodyList(); b != NULL; b = b->GetNext()) {
+        if (b->GetUserData() != NULL ) {
+            CCSprite *sprite = (CCSprite *) b->GetUserData();
+            if (sprite.tag == 500) {
+                double delayInSeconds = 4.0;
+                dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+                dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+                    if (  b->GetUserData() != NULL ) {
+                        [dotsToDestroy addObject:[NSValue valueWithPointer:b]];
+                    }
+                });
+            }
+        }
+    }
+}
+    
 - (void)updateDotLifeTime{
     dotTag++;
-    [self createDotAtLocation:ccp(50 , 50) withSize:CGSizeMake(10, 10) withTag:dotTag];
+    [self createDotAtLocation:ccp(50 , 50) withSize:CGSizeMake(10, 10) withTag:dotTag andSprite:[CCSprite spriteWithFile:@"images.png"]];
 }
 
 - (void)endTheGame {
     [self invalidateAllTimers];
+    score = (60 - (timeCount/10))*3 + 10 + ballHit - ((5 - lifeLeft)*10) + (bonusBallCatched*50);
     dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.5 * NSEC_PER_SEC));
     dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
         NSString *message = [self updateHighScoreWithScore:score];
@@ -242,13 +272,11 @@
 }
 
 - (void)updateLevel {
-    score++;
-    AudioServicesPlaySystemSound(1005);
-    AppController *controller = [[UIApplication sharedApplication] delegate];
-    controller.gameLevel = [NSNumber numberWithInt:score+1];
-    [scoreNode setString:[NSString stringWithFormat:@" %d ", score]];
+    ballHit++;
+    AudioServicesPlaySystemSound(1000);
+    [scoreNode setString:[NSString stringWithFormat:@" %d ", ballHit]];
     dotTag++;
-    [self createDotAtLocation:ccp(50 , 50) withSize:CGSizeMake(10, 10) withTag:dotTag];
+    [self createDotAtLocation:ccp(50 , 50) withSize:CGSizeMake(10, 10) withTag:dotTag andSprite:[CCSprite spriteWithFile:@"images.png"]];
 }
 
 - (void)invalidateAllTimers{
@@ -263,6 +291,10 @@
     if (deleteDotTimer) {
         [deleteDotTimer invalidate];
         deleteDotTimer = nil;
+    }
+    if (bonusBallTimer) {
+        [bonusBallTimer invalidate];
+        bonusBallTimer = nil;
     }
 }
 
@@ -279,17 +311,16 @@
 
 #pragma mark - Create Body Methods
 
-- (void)createDotAtLocation:(CGPoint)location withSize:(CGSize)size withTag:(int)tag {
-    CCSprite *dot = [CCSprite spriteWithFile:@"images.png"];
-    dot.position = ccp(location.x/PTM_RATIO, location.y/PTM_RATIO);
-    dot.tag = tag;
-    [self addChild:dot];
+- (void)createDotAtLocation:(CGPoint)location withSize:(CGSize)size withTag:(int)tag andSprite :(CCSprite *)image {
+    image.position = ccp(location.x/PTM_RATIO, location.y/PTM_RATIO);
+    image.tag = tag;
+    [self addChild:image];
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
     bodyDef.position = b2Vec2(location.x/PTM_RATIO, location.y/PTM_RATIO);
     bodyDef.gravityScale = 0 ;
     bodyDef.allowSleep = false ;
-    bodyDef.userData = dot;
+    bodyDef.userData = image;
     b2Body *dotb;
     dotb = world->CreateBody(&bodyDef);
     b2CircleShape shape;
@@ -298,7 +329,7 @@
     fixtureDef.shape = &shape;
     fixtureDef.density = 1;
     fixtureDef.friction = 0;
-    fixtureDef.restitution = 0.5;
+    fixtureDef.restitution = 0.8;
     double angle =  arc4random()%80+5 ;
     dotb->SetLinearVelocity(b2Vec2(50*sin(angle),50*cos(angle)));
     _dotFixture = dotb->CreateFixture(&fixtureDef);
@@ -334,6 +365,7 @@
     int32 velocityIterations = 8;
     int32 positionIterations = 1;
     
+    [lifeBar setPercentage:20*lifeLeft];
     std::vector<MyContact>::iterator pos;
     
     for(pos = _contactListener->_contacts.begin();
@@ -347,13 +379,19 @@
             CCSprite *spriteA = (CCSprite *) bodyA->GetUserData();
             CCSprite *spriteB = (CCSprite *) bodyB->GetUserData();
             if (spriteA.tag >= 1000 && spriteB.tag == 2) {
-//                destroyedSpriteTag = spriteA.tag;
                 [dotsToDestroy addObject:[NSValue valueWithPointer:bodyA]];
                 [self updateLevel];
             } else if (spriteA.tag == 2 && spriteB.tag >= 1000) {
-//                destroyedSpriteTag = spriteB.tag;
                 [dotsToDestroy addObject:[NSValue valueWithPointer:bodyB]];
                 [self updateLevel];
+            } else if (spriteA.tag == 500 && spriteB.tag == 2) {
+                [dotsToDestroy addObject:[NSValue valueWithPointer:bodyA]];
+                lifeLeft++;
+                bonusBallCatched++;
+            }else if (spriteA.tag == 2 && spriteB.tag == 500) {
+                [dotsToDestroy addObject:[NSValue valueWithPointer:bodyB]];
+                lifeLeft++;
+                bonusBallCatched++;
             }
         }
 
@@ -396,7 +434,6 @@
     @catch (NSException *exception) {
         NSLog(@"Exception:%@",exception);
     }
-   
 }
 
 #pragma mark - Accelerometer Delegate Methods

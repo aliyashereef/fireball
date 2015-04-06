@@ -15,7 +15,10 @@
 #pragma mark - IntroLayer
 
 // HelloWorldLayer implementation
-@implementation IntroLayer
+@implementation IntroLayer{
+    CCLabelTTF *startUpTimeNode;
+    int count;
+}
 
 // Helper class method that creates a Scene with the HelloWorldLayer as the only child.
 +(CCScene *) scene
@@ -37,30 +40,27 @@
 -(id) init
 {
 	if( (self=[super init])) {
-		
+        count = 3;
 		// ask director for the window size
 		CGSize size = [[CCDirector sharedDirector] winSize];
-		
-		CCSprite *background;
-		
-		if( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone ) {
-			background = [CCSprite spriteWithFile:@"Default.png"];
-			background.rotation = 90;
-		} else {
-			background = [CCSprite spriteWithFile:@"Default-Landscape~ipad.png"];
-		}
-		background.position = ccp(size.width/2, size.height/2);
-		
-		// add the label as a child to this Layer
-		[self addChild: background];
+        
+        startUpTimeNode = [CCLabelTTF labelWithString:[NSString stringWithFormat:@" %d ",count] fontName:@"Arial" fontSize:100.0 ];
+        startUpTimeNode.position = ccp(size.width*0.5,size.height*0.5);
+        [self addChild:startUpTimeNode z:100];
+        [self performSelector:@selector(showInitialCounter)  withObject:self afterDelay:1.0];
 	}
 	
 	return self;
 }
 
+- (void)showInitialCounter {
+    count--;
+    [startUpTimeNode setString:[NSString stringWithFormat:@" %d ",count]];
+}
+
 -(void) onEnter
 {
 	[super onEnter];
-	[[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.0 scene:[GameMainSceneLayer scene] ]];
+	[[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:3.0 scene:[GameMainSceneLayer scene] ]];
 }
 @end
