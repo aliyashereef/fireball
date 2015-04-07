@@ -15,6 +15,10 @@
 		4D0632851AD2C583006FE1A0 /* Ball-Bonus@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D0632841AD2C583006FE1A0 /* Ball-Bonus@2x.png */; };
 		4D0632871AD2CB28006FE1A0 /* time@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D0632861AD2CB28006FE1A0 /* time@2x.png */; };
 		4D0632891AD2CB2F006FE1A0 /* C-BG@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D0632881AD2CB2F006FE1A0 /* C-BG@2x.png */; };
+		4D06328B1AD3AA4D006FE1A0 /* UI_2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D06328A1AD3AA4D006FE1A0 /* UI_2@2x.png */; };
+		4D06328D1AD3B2E7006FE1A0 /* GameOver@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D06328C1AD3B2E7006FE1A0 /* GameOver@2x.png */; };
+		4D06328F1AD3E519006FE1A0 /* Line-Separator@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D06328E1AD3E519006FE1A0 /* Line-Separator@2x.png */; };
+		4D0632911AD40175006FE1A0 /* button-BG-@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D0632901AD40175006FE1A0 /* button-BG-@2x.png */; };
 		4D06B0221AC2ED1D00B7AFF5 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D06B0211AC2ED1D00B7AFF5 /* QuartzCore.framework */; };
 		4D06B0241AC2ED1D00B7AFF5 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D06B0231AC2ED1D00B7AFF5 /* OpenGLES.framework */; };
 		4D06B0261AC2ED1D00B7AFF5 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D06B0251AC2ED1D00B7AFF5 /* OpenAL.framework */; };
@@ -210,6 +214,10 @@
 		4D0632841AD2C583006FE1A0 /* Ball-Bonus@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Ball-Bonus@2x.png"; sourceTree = "<group>"; };
 		4D0632861AD2CB28006FE1A0 /* time@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "time@2x.png"; sourceTree = "<group>"; };
 		4D0632881AD2CB2F006FE1A0 /* C-BG@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "C-BG@2x.png"; sourceTree = "<group>"; };
+		4D06328A1AD3AA4D006FE1A0 /* UI_2@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "UI_2@2x.png"; sourceTree = "<group>"; };
+		4D06328C1AD3B2E7006FE1A0 /* GameOver@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "GameOver@2x.png"; sourceTree = "<group>"; };
+		4D06328E1AD3E519006FE1A0 /* Line-Separator@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Line-Separator@2x.png"; sourceTree = "<group>"; };
+		4D0632901AD40175006FE1A0 /* button-BG-@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-BG-@2x.png"; sourceTree = "<group>"; };
 		4D06B01E1AC2ED1D00B7AFF5 /* Box2DTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Box2DTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D06B0211AC2ED1D00B7AFF5 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		4D06B0231AC2ED1D00B7AFF5 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -617,9 +625,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4D0632941AD41358006FE1A0 /* GKHelper_Class */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = GKHelper_Class;
+			sourceTree = "<group>";
+		};
 		4D06B0151AC2ED1D00B7AFF5 = {
 			isa = PBXGroup;
 			children = (
+				4D0632941AD41358006FE1A0 /* GKHelper_Class */,
 				4D06B0351AC2ED1D00B7AFF5 /* Box2DTest */,
 				4D06B0201AC2ED1D00B7AFF5 /* Frameworks */,
 				4D06B01F1AC2ED1D00B7AFF5 /* Products */,
@@ -1220,8 +1236,12 @@
 		4DAA84111AC98D400035ED90 /* Sprites */ = {
 			isa = PBXGroup;
 			children = (
+				4D06328E1AD3E519006FE1A0 /* Line-Separator@2x.png */,
+				4D06328C1AD3B2E7006FE1A0 /* GameOver@2x.png */,
 				4D0632841AD2C583006FE1A0 /* Ball-Bonus@2x.png */,
+				4D06328A1AD3AA4D006FE1A0 /* UI_2@2x.png */,
 				4D06327E1AD2BD69006FE1A0 /* active@2x.png */,
+				4D0632901AD40175006FE1A0 /* button-BG-@2x.png */,
 				4D0632881AD2CB2F006FE1A0 /* C-BG@2x.png */,
 				4D0632861AD2CB28006FE1A0 /* time@2x.png */,
 				4D0632821AD2C576006FE1A0 /* Ball-Normal@2x.png */,
@@ -1262,6 +1282,7 @@
 				TargetAttributes = {
 					4D06B01D1AC2ED1D00B7AFF5 = {
 						CreatedOnToolsVersion = 6.1.1;
+						DevelopmentTeam = 5DYFD9UMYF;
 					};
 				};
 			};
@@ -1292,14 +1313,18 @@
 				4D06B0481AC2ED1D00B7AFF5 /* Icon.png in Resources */,
 				4D06B1A61AC2ED1E00B7AFF5 /* ChangeLog in Resources */,
 				4D06B03A1AC2ED1D00B7AFF5 /* Default@2x.png in Resources */,
+				4D06328B1AD3AA4D006FE1A0 /* UI_2@2x.png in Resources */,
 				4D0632831AD2C576006FE1A0 /* Ball-Normal@2x.png in Resources */,
 				4D06326F1AD2A7A1006FE1A0 /* Sprites.xcassets in Resources */,
+				4D06328F1AD3E519006FE1A0 /* Line-Separator@2x.png in Resources */,
 				4D06327F1AD2BD69006FE1A0 /* active@2x.png in Resources */,
 				4D06B0441AC2ED1D00B7AFF5 /* Icon-Small.png in Resources */,
+				4D06328D1AD3B2E7006FE1A0 /* GameOver@2x.png in Resources */,
 				4D06B0401AC2ED1D00B7AFF5 /* Icon-72.png in Resources */,
 				4D06B0381AC2ED1D00B7AFF5 /* Default.png in Resources */,
 				4D06B0421AC2ED1D00B7AFF5 /* Icon-Small-50.png in Resources */,
 				4D06B04D1AC2ED1D00B7AFF5 /* iTunesArtwork in Resources */,
+				4D0632911AD40175006FE1A0 /* button-BG-@2x.png in Resources */,
 				4D0632851AD2C583006FE1A0 /* Ball-Bonus@2x.png in Resources */,
 				4D06B2661AC2ED1F00B7AFF5 /* blocks.png in Resources */,
 				4D06B0461AC2ED1D00B7AFF5 /* Icon-Small@2x.png in Resources */,
@@ -1534,7 +1559,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: PRATHAPAN SETHUMAPHAVAN (3KHRN2958R)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1553,7 +1578,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "a4507e83-aa9a-4075-9e0f-f70095c4bee9";
+				PROVISIONING_PROFILE = "";
 				USER_HEADER_SEARCH_PATHS = "\"Box2DTest/libs\"";
 				WRAPPER_EXTENSION = app;
 			};
@@ -1566,7 +1591,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: PRATHAPAN SETHUMAPHAVAN (3KHRN2958R)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Box2DTest/Prefix.pch;
@@ -1584,7 +1609,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "a4507e83-aa9a-4075-9e0f-f70095c4bee9";
+				PROVISIONING_PROFILE = "";
 				USER_HEADER_SEARCH_PATHS = "\"Box2DTest/libs\"";
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;

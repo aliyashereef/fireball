@@ -10,6 +10,7 @@
 // Import the interfaces
 #import "IntroLayer.h"
 #import "GameMainSceneLayer.h"
+#import "GameOverSceneLayer.h"
 
 
 #pragma mark - IntroLayer
@@ -47,6 +48,11 @@
         startUpTimeNode = [CCLabelTTF labelWithString:[NSString stringWithFormat:@" %d ",count] fontName:@"Arial" fontSize:100.0 ];
         startUpTimeNode.position = ccp(size.width*0.5,size.height*0.5);
         [self addChild:startUpTimeNode z:100];
+//        CCSprite *introSceneUI =[CCSprite spriteWithFile:@"UI@2x.png" rect:CGRectMake(0, 0,size.width,size.height)];
+//        introSceneUI.anchorPoint = ccp(0.5,0.5);
+//        introSceneUI.position = ccp(size.width/2,size.height/2);
+//        introSceneUI.tag = 0;
+//        [self addChild:introSceneUI z:0];
         [self performSelector:@selector(showInitialCounter)  withObject:self afterDelay:1.0];
 	}
 	

@@ -81,7 +81,7 @@
         lifeLeft = 5;
         bonusBallCatched = 0;
 
-        updateTimer = [NSTimer scheduledTimerWithTimeInterval:1.5 target:self selector:@selector(UpdateBasicTimer) userInfo:nil repeats:YES];
+        updateTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(UpdateBasicTimer) userInfo:nil repeats:YES];
         dotLifeTimer = [NSTimer scheduledTimerWithTimeInterval:4 target:self selector:@selector(updateDotLifeTime) userInfo:nil repeats:YES];
         deleteDotTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(deleteDot) userInfo:nil repeats:YES];
         bonusBallTimer = [NSTimer scheduledTimerWithTimeInterval:6 target:self selector:@selector(createBonusBall) userInfo:nil repeats:YES];
@@ -167,7 +167,7 @@
     basicUI = [CCSprite spriteWithFile:@"UI@2x.png" rect:CGRectMake(0, 0,screenSize.width,screenSize.height)];
     basicUI.anchorPoint = ccp(0.5,0.5);
     basicUI.position = ccp(screenSize.width/2,screenSize.height/2);
-    basicUI.tag = 3;
+    basicUI.tag = 38;
     [self addChild:basicUI z:0];
     
     scoreNode = [CCLabelTTF labelWithString:[NSString stringWithFormat:@" %d ",ballHit] fontName:@"Arial" fontSize:30.0 ];
@@ -185,14 +185,20 @@
 }
 
 -(void)UpdateBasicTimer{
-    [basicUI setColor:ccc3(200,215,0)];
+    if ([self getChildByTag:0]) {
+        [self removeChildByTag:0 cleanup:YES];
+    }
     if (boxContactBody) {
         lifeLeft--;
         AudioServicesPlaySystemSound (kSystemSoundID_Vibrate);
-        [basicUI setColor:ccc3(255,50,0)];
+        CCSprite *detectWallCollisionUI =[CCSprite spriteWithFile:@"UI_2@2x.png" rect:CGRectMake(0, 0,screenSize.width,screenSize.height)];
+        detectWallCollisionUI.anchorPoint = ccp(0.5,0.5);
+        detectWallCollisionUI.position = ccp(screenSize.width/2,screenSize.height/2);
+        detectWallCollisionUI.tag = 0;
+        [self addChild:detectWallCollisionUI z:0];
         boxContactBody = NO;
     }
-     blockBody->SetLinearDamping(10.0);
+    blockBody->SetLinearDamping(10.0);
     timerBar.percentage=1.6777*timeCount;
 
     timeNode.string = [NSString stringWithFormat:@" %d ",timeCount];
@@ -339,7 +345,7 @@
 - (void)createDotAtLocation:(CGPoint)location withSize:(CGSize)size withTag:(int)tag andSprite :(CCSprite *)image {
     image.position = ccp(location.x/PTM_RATIO, location.y/PTM_RATIO);
     image.tag = tag;
-    [self addChild:image];
+    [self addChild:image z:1001];
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
     bodyDef.position = b2Vec2(location.x/PTM_RATIO, location.y/PTM_RATIO);
@@ -365,7 +371,7 @@
     CCSprite *block = [CCSprite spriteWithFile:@"Eater-Normal@2x.png"];
     block.position = ccp(location.x/PTM_RATIO, location.y/PTM_RATIO);
     block.tag = 2;
-    [self addChild:block];
+    [self addChild:block z:1000];
     b2BodyDef bodyDef2;
     bodyDef2.type = b2_dynamicBody;
     bodyDef2.gravityScale = 1 ;
@@ -397,7 +403,7 @@
         pos != _contactListener->_contacts.end(); ++pos) {
     
         DotContact contact = *pos;
-        
+
         b2Body *bodyA = contact.fixtureA->GetBody();
         b2Body *bodyB = contact.fixtureB->GetBody();
         if (bodyA->GetUserData() != NULL && bodyB->GetUserData() != NULL) {
@@ -426,7 +432,7 @@
            (contact.fixtureA == _leftEdgeFixture && contact.fixtureB == _ballFixture)){
             boxContactBody = YES;
         }
-    }
+        }
     [self deleteDotsInQueue];
     for(b2Body *b = world->GetBodyList(); b != NULL; b = b->GetNext()) {
         if (b->GetUserData() != NULL ) {
@@ -447,6 +453,20 @@
 - (void)accelerometer:(UIAccelerometer*)accelerometer didAccelerate:(UIAcceleration*)acceleration{
     b2Vec2 gravity( acceleration.x  * 450, acceleration.y  * 450);
     world->SetGravity( gravity );
+}
+- (void)createParticleEffectInCode {
+//    
+//    CCParticleSystemQuad *emitter = [[CCParticleSystemQuad alloc] initWithTotalParticles:45];
+//    [emitter setEmitterMode: kCCParticleModeGravity];
+//    emitter.position = ccp(100, 100);
+//    emitter.texture=[[CCTextureCache sharedTextureCache] addImage:@"fire.png"];
+    CCParticleFire *fire = [[CCParticleFire alloc]init];
+    fire.position = ccp(screenSize.width/2,screenSize.height/2);
+    [fire setScaleX:0.5];
+    [fire setScaleY:0.5];
+
+    [self addChild:fire z:10000];
+//    [self addChild:emitter];
 }
 
 -(void) dealloc{

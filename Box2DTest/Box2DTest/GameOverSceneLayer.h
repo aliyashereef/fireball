@@ -7,8 +7,9 @@
 //
 
 #import "cocos2d.h"
+#import <GameKit/GameKit.h>
 
-@interface GameOverSceneLayer : CCLayer
+@interface GameOverSceneLayer : CCLayer<GKGameCenterControllerDelegate,UINavigationControllerDelegate>
 
 +(CCScene *) sceneWithWon:(NSString *)message withScore:(int)score;
 - (id)initWithWon:(NSString *)message withScore:(int)score;
