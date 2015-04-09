@@ -21,7 +21,6 @@
     CCLabelTTF *startUpTimeNode;
 }
 
-//@property (nonatomic, strong) NSNumber *gameLevel;
 @property (nonatomic, retain) UIWindow *window;
 @property (readonly) MyNavigationController *navController;
 @property (readonly) CCDirectorIOS *director;

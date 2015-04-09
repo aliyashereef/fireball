@@ -1,0 +1,17 @@
+//
+//  PrefixHeader.pch
+//  Box2DTest
+//
+//  Created by aliya on 09/04/15.
+//  Copyright (c) 2015 QBurst. All rights reserved.
+//
+
+#ifndef Box2DTest_PrefixHeader_pch
+#define Box2DTest_PrefixHeader_pch
+
+#import "GameConstants.h"
+#import "AppDelegate.h"
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+
+#endif

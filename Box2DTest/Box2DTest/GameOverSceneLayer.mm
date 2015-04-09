@@ -15,7 +15,7 @@
     CGSize winSize;
     NSString *leaderBoardIdentifier;
     BOOL isGameCenterEnabled;
-    NSNumber *savedScore;
+    NSNumber *currentScore;
 }
 
 +(CCScene *) sceneWithWon:(NSString *)message withScore:(int)score{
@@ -27,9 +27,15 @@
 
 - (id)initWithWon:(NSString *)message withScore:(int)score{
     if ((self=[super init])) {
-        [self authenticateLocalPlayer];
+        
+        currentScore = [[NSNumber alloc ]initWithInt:score];
+        if(isGameCenterEnabled) {
+            [self reportScore:[currentScore intValue]];
+        } else {
+            [self authenticateLocalPlayer];
+        }
         winSize = [[CCDirector sharedDirector] winSize];
-        savedScore = [[NSUserDefaults standardUserDefaults] objectForKey:@"High Score"];
+        NSNumber *savedScore = [[NSUserDefaults standardUserDefaults] objectForKey:@"High Score"];
         
         CCLabelTTF * scoreTextLabel = [CCLabelTTF labelWithString:@"YOUR" fontName:@"HelveticaNeue" fontSize:20];
         CCLabelTTF * scoreLabel = [CCLabelTTF labelWithString:@"SCORE:" fontName:@"HelveticaNeue" fontSize:30];
@@ -46,12 +52,12 @@
         scoreValueLabel.position = ccp(winSize.width/2+scoreTextLabel.contentSize.width, winSize.height/2 + scoreTextLabel.contentSize.height );
         highScoreLabel.position =ccp(winSize.width/2,winSize.height/2+ scoreValueLabel.contentSize.height - 100);
         
-        CCSprite *introSceneUI =[CCSprite spriteWithFile:@"GameOver@2x.png" rect:CGRectMake(0, 0,winSize.width,winSize.height)];
+        CCSprite *introSceneUI =[CCSprite spriteWithFile:@"GameOver.png" rect:CGRectMake(0, 0,winSize.width,winSize.height)];
         introSceneUI.anchorPoint = ccp(0.5,0.5);
         introSceneUI.position = ccp(winSize.width/2,winSize.height/2);
         introSceneUI.tag = 0;
         [self addChild:introSceneUI z:0];
-        CCSprite *lineSeperator =[CCSprite spriteWithFile:@"Line-Separator@2x.png"];
+        CCSprite *lineSeperator =[CCSprite spriteWithFile:@"Line-Separator.png"];
         lineSeperator.anchorPoint = ccp(0.5,0.5);
         lineSeperator.position = ccp(winSize.width/2,winSize.height/2-15);
         lineSeperator.tag = 1;
@@ -72,11 +78,12 @@
     [CCMenuItemFont setFontSize:22];
     [CCMenuItemFont setFontName:@"Helvetica"];
     
-    CCMenuItem *playAgainMenuItem = [CCMenuItemImage itemWithNormalImage:@"button-BG-@2x.png" selectedImage:@"button-BG-@2x.png" target:self selector:@selector(playAgainButtonTapped)];
+    CCMenuItem *playAgainMenuItem = [CCMenuItemImage itemWithNormalImage:@"button-BG.png" selectedImage:@"button-BG.png" target:self selector:@selector(playAgainButtonTapped)];
     playAgainMenuItem.position = ccp(winSize.width/2, winSize.height/3);
     
     // Achievement Menu Item using blocks
-    CCMenuItem *itemAchievement = [CCMenuItemFont itemWithString:@"Achievements" block:^(id sender) {
+    CCMenuItem *itemAchievement = [CCMenuItemFont itemWithString:@"Achievements"  block:^(id sender) {
+        
         GKGameCenterViewController *acheivementViewController = [[GKGameCenterViewController alloc] init];
         acheivementViewController.gameCenterDelegate = self;
         acheivementViewController.viewState = GKGameCenterViewControllerStateAchievements;
@@ -87,6 +94,9 @@
     
     // Leaderboard Menu Item using blocks
     CCMenuItem *itemLeaderboard = [CCMenuItemFont itemWithString:@"Leaderboard" block:^(id sender) {
+        if (isGameCenterEnabled) {
+            
+        }
         GKGameCenterViewController *leaderBoardViewController = [[GKGameCenterViewController alloc] init];
         leaderBoardViewController.gameCenterDelegate = self;
         leaderBoardViewController.viewState = GKGameCenterViewControllerStateLeaderboards;
@@ -96,8 +106,8 @@
     }];
 
     CCMenu *playAgain = [CCMenu menuWithItems:itemLeaderboard,itemAchievement ,playAgainMenuItem, nil];
-    [playAgain setPosition:ccp( winSize.width/2, winSize.height/3-20)];
-    [playAgain alignItemsVertically];
+    [playAgain setPosition:ccp( winSize.width/2, winSize.height/3-50)];
+    [playAgain alignItemsVerticallyWithPadding:20.0];
     [self addChild:playAgain z:100];
 }
 
@@ -108,7 +118,7 @@
 - (void)authenticateLocalPlayer{
     // Instantiate a GKLocalPlayer object to use for authenticating a player.
     GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
-    
+
     localPlayer.authenticateHandler = ^(UIViewController *viewController, NSError *error){
         if (viewController != nil) {
             // If it's needed display the login view controller.
@@ -119,16 +129,14 @@
             if ([GKLocalPlayer localPlayer].authenticated) {
                 // If the player is already authenticated then indicate that the Game Center features can be used.
                 isGameCenterEnabled = YES;
-                
+                [self reportScore:[currentScore intValue]];
                 // Get the default leaderboard identifier.
                 [[GKLocalPlayer localPlayer] loadDefaultLeaderboardIdentifierWithCompletionHandler:^(NSString *leaderboardIdentifier, NSError *error) {
                     if (error != nil) {
                         NSLog(@"%@", [error localizedDescription]);
                     }
                     else{
-                        leaderboardIdentifier = leaderboardIdentifier;
-                        [self reportScore:[savedScore intValue]];
-
+                        leaderBoardIdentifier = leaderboardIdentifier;
                     }
                 }];
             }

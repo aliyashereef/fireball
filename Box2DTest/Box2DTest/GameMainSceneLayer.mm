@@ -12,6 +12,7 @@
 #import "GameContactListener.h"
 #include <math.h>
 #import <AudioToolbox/AudioServices.h>
+#import "GameConstants.h"
 
 #pragma mark - GameMainSceneLayer
 
@@ -28,7 +29,9 @@
     CCProgressTimer *lifeBar;
     CCProgressTimer *timerBar;
     NSMutableArray *dotsToDestroy;
-    CCSprite *basicUI;
+    
+    CCSprite *block;
+    CCSprite *timeSprite;
     
     CCLabelTTF *scoreNode;
     CCLabelTTF *timeNode;
@@ -75,7 +78,7 @@
         dotsToDestroy = [[NSMutableArray alloc] init];
         // init physics
         [self initPhysics];
-        
+
         timeCount = 60;
         dotTag = 1000;
         lifeLeft = 5;
@@ -83,7 +86,7 @@
 
         updateTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(UpdateBasicTimer) userInfo:nil repeats:YES];
         dotLifeTimer = [NSTimer scheduledTimerWithTimeInterval:4 target:self selector:@selector(updateDotLifeTime) userInfo:nil repeats:YES];
-        deleteDotTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(deleteDot) userInfo:nil repeats:YES];
+        deleteDotTimer = [NSTimer scheduledTimerWithTimeInterval:3.5 target:self selector:@selector(deleteDot) userInfo:nil repeats:YES];
         bonusBallTimer = [NSTimer scheduledTimerWithTimeInterval:6 target:self selector:@selector(createBonusBall) userInfo:nil repeats:YES];
 
         
@@ -94,7 +97,7 @@
         [self createLifeBar];
         [self createBlockAtLocation:ccp(screenSize.width/2,screenSize.height/2) withSize:CGSizeMake(10, 10)];
         double randomNumber = (arc4random()%400);
-        [self createDotAtLocation:ccp(50,randomNumber) withSize:CGSizeMake(10, 10) withTag:dotTag andSprite:[CCSprite spriteWithFile:@"Ball-Normal@2x.png"]];
+        [self createDotAtLocation:ccp(50,randomNumber) withSize:CGSizeMake(10, 10) withTag:dotTag andSprite:[CCSprite spriteWithFile:@"Ball-Normal.png"]];
         [self scheduleUpdate];
         [self schedule:@selector(randomMotion) interval:.1];
     }
@@ -152,7 +155,7 @@
 #pragma mark - Private Methods
 
 - (void)createLifeBar {
-    lifeBar= [CCProgressTimer progressWithSprite:[CCSprite spriteWithFile:@"active@2x.png"]];
+    lifeBar= [CCProgressTimer progressWithSprite:[CCSprite spriteWithFile:@"active.png"]];
     lifeBar.type = kCCProgressTimerTypeBar;
     lifeBar.midpoint = ccp(0,0);
     lifeBar.barChangeRate = ccp(1,0);
@@ -164,7 +167,7 @@
 
 - (void)createBasicUI{
     //Create score bar
-    basicUI = [CCSprite spriteWithFile:@"UI@2x.png" rect:CGRectMake(0, 0,screenSize.width,screenSize.height)];
+    CCSprite *basicUI = [CCSprite spriteWithFile:@"UI.png" rect:CGRectMake(0, 0,screenSize.width,screenSize.height)];
     basicUI.anchorPoint = ccp(0.5,0.5);
     basicUI.position = ccp(screenSize.width/2,screenSize.height/2);
     basicUI.tag = 38;
@@ -174,24 +177,32 @@
     scoreNode.position = ccp(screenSize.width*0.90,screenSize.height*0.93);
     [self addChild:scoreNode z:99];
     
-    timerBar=[CCProgressTimer progressWithSprite:[CCSprite spriteWithFile:@"C-BG@2x.png"]];
+    timerBar=[CCProgressTimer progressWithSprite:[CCSprite spriteWithFile:@"C-BG.png"]];
     timerBar.type=kCCProgressTimerTypeRadial;
     timerBar.position=ccp(screenSize.width*0.10,screenSize.height*0.93);
     timerBar.percentage = 100;
     [self addChild:timerBar z:99];
-    CCSprite *timeSprite = [CCSprite spriteWithFile:@"time@2x.png"];
+    timeSprite = [CCSprite spriteWithFile:@"time.png"];
     timeSprite.position = ccp(screenSize.width*0.10,screenSize.height*0.93);
     [self addChild:timeSprite z:100];
+    
 }
 
 -(void)UpdateBasicTimer{
+
+    [block setColor:ccc3(200,215,0)];
     if ([self getChildByTag:0]) {
         [self removeChildByTag:0 cleanup:YES];
+    }
+    if (lifeLeft < 10) {
+        CCBlink * blinker = [CCBlink actionWithDuration: 0.1 blinks: 1];
+        [timeSprite runAction: blinker];
     }
     if (boxContactBody) {
         lifeLeft--;
         AudioServicesPlaySystemSound (kSystemSoundID_Vibrate);
-        CCSprite *detectWallCollisionUI =[CCSprite spriteWithFile:@"UI_2@2x.png" rect:CGRectMake(0, 0,screenSize.width,screenSize.height)];
+        [block setColor:ccc3(255,50,0)];
+        CCSprite *detectWallCollisionUI =[CCSprite spriteWithFile:@"UI_2.png" rect:CGRectMake(0, 0,screenSize.width,screenSize.height)];
         detectWallCollisionUI.anchorPoint = ccp(0.5,0.5);
         detectWallCollisionUI.position = ccp(screenSize.width/2,screenSize.height/2);
         detectWallCollisionUI.tag = 0;
@@ -219,9 +230,10 @@
     for(b2Body *b = world->GetBodyList(); b != NULL; b = b->GetNext()) {
         if (b->GetUserData() != NULL ) {
             CCSprite *sprite = (CCSprite *) b->GetUserData();
+
             if (sprite.tag >= 1000) {
-                [sprite setColor:ccc3(255,50,0)];
-                double delayInSeconds = 4.0;
+                [sprite setColor:ccc3(255,50,0)];sprite.tag = 700;
+                double delayInSeconds = 5.0;
                 dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
                 dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
                     if (  b->GetUserData() != NULL ) {
@@ -237,13 +249,13 @@
 - (void)createBonusBall {
     if ( lifeLeft < 5 ) {
         double randomNumber = (arc4random()% 400) ;
-        [self createDotAtLocation:ccp(screenSize.width/2,randomNumber) withSize:CGSizeMake(10, 10) withTag:500 andSprite:[CCSprite spriteWithFile:@"Ball-Bonus@2x.png"]];
+        [self createDotAtLocation:ccp(screenSize.width/2,randomNumber) withSize:CGSizeMake(10, 10) withTag:500 andSprite:[CCSprite spriteWithFile:@"Ball-Bonus.png"]];
     }
     for(b2Body *b = world->GetBodyList(); b != NULL; b = b->GetNext()) {
         if (b->GetUserData() != NULL ) {
             CCSprite *sprite = (CCSprite *) b->GetUserData();
             if (sprite.tag == 500) {
-                double delayInSeconds = 3.0;
+                double delayInSeconds = 4.0;
                 dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
                 dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
                     if (  b->GetUserData() != NULL ) {
@@ -258,7 +270,7 @@
 - (void)updateDotLifeTime{
     dotTag++;
     double randomNumber = (arc4random()%400);
-    [self createDotAtLocation:ccp(100,randomNumber) withSize:CGSizeMake(10, 10) withTag:dotTag andSprite:[CCSprite spriteWithFile:@"Ball-Normal@2x.png"]];
+    [self createDotAtLocation:ccp(100,randomNumber) withSize:CGSizeMake(10, 10) withTag:dotTag andSprite:[CCSprite spriteWithFile:@"Ball-Normal.png"]];
 }
 
 - (void)endTheGame {
@@ -284,15 +296,17 @@
 
 - (void)updateLevelWithBallHit {
     ballHit++;
+    [scoreNode setString:[NSString stringWithFormat:@" %d ", ballHit]];
+    dotTag++;
+    double randomNumber = (arc4random()%400);
+    [self createDotAtLocation:ccp(50, randomNumber) withSize:CGSizeMake(10, 10) withTag:dotTag andSprite:[CCSprite spriteWithFile:@"Ball-Normal.png"]];
+}
+
+- (void)playCatchAlert {
     SystemSoundID myAlertSound;
     NSURL *url = [NSURL URLWithString:@"/System/Library/Audio/UISounds/new-mail.caf"];
     AudioServicesCreateSystemSoundID((__bridge CFURLRef)(url), &myAlertSound);
     AudioServicesPlaySystemSound(myAlertSound);
-
-    [scoreNode setString:[NSString stringWithFormat:@" %d ", ballHit]];
-    dotTag++;
-    double randomNumber = (arc4random()%400);
-    [self createDotAtLocation:ccp(50, randomNumber) withSize:CGSizeMake(10, 10) withTag:dotTag andSprite:[CCSprite spriteWithFile:@"Ball-Normal@2x.png"]];
 }
 
 - (void)invalidateAllTimers{
@@ -320,6 +334,7 @@
         b2Body *body = (b2Body*)[bodyValue pointerValue];
         if (body->GetUserData() != NULL) {
             CCSprite *sprite = (CCSprite *) body->GetUserData();
+            [self addChild:[self createParticleEffectAtPosition:ccp(sprite.position.x, sprite.position.y) forTag:sprite.tag] z:10000];
             [self removeChild:sprite cleanup:YES];
             body->SetUserData(NULL);
             world->DestroyBody(body);
@@ -338,6 +353,69 @@
     } else {
         return @"Game Over";
     }
+}
+
+- (CCParticleSystemQuad *)createParticleEffectAtPosition:(CGPoint)point forTag:(int)tag{
+    //
+    CCParticleSystemQuad *emitter = [[CCParticleSystemQuad alloc] initWithTotalParticles:506];
+    emitter.duration = 0.15;
+    switch (tag) {
+        case 500:
+            emitter.texture=[[CCTextureCache sharedTextureCache] addImage:@"GreenParticle.png"];break;
+        case 700:
+            emitter.texture=[[CCTextureCache sharedTextureCache] addImage:@"RedParticle.png"];break;
+        default:
+            emitter.texture=[[CCTextureCache sharedTextureCache] addImage:@"DefaultParticle.png"];break;
+    }
+    
+    emitter.sourcePosition  = point;
+    [emitter setEmitterMode: kCCParticleModeGravity];
+    
+    // angle
+    emitter.angle = 0;
+    emitter.angleVar = 360;
+    //  Gravity Mode: speed of particles
+    emitter.speed = 55.33;
+    emitter.speedVar = 288.21;
+    // gravity
+    emitter.gravity = ccp(333.68, 333.68);
+    // Gravity Mode:  radial
+    emitter.radialAccel = 0;
+    emitter.radialAccelVar = 0;
+    
+    emitter.tangentialAccel = 0;
+    emitter.tangentialAccelVar = 0.0;
+    emitter.life = 0.20;
+    emitter.lifeVar = 0.15;
+    
+    emitter.startSize = 5.0;
+    emitter.startSizeVar = 15.00;
+    emitter.endSize = 0.0;
+    emitter.endSizeVar = 0.0;
+    emitter.startSpin = 0.0;
+    emitter.startSpinVar = 0.0;
+    emitter.endSpin = 0.0;
+    emitter.endSpinVar = 0.0;
+    
+    // blend function
+    emitter.blendFunc = (ccBlendFunc) { 1,1 };
+    // color
+    emitter.startColor = (ccColor4F) {255,56,255,1};
+    
+    emitter.startColorVar = (ccColor4F) {0,0,0,1};
+    
+    emitter.endColor = (ccColor4F) {240,54,255,1};
+    
+    emitter.endColorVar = (ccColor4F) {0,0,0,0};
+    
+    // position
+    emitter.position = ccp(0,0);
+    
+    
+    emitter.emissionRate = emitter.totalParticles/emitter.life;
+    emitter.blendAdditive = YES;
+    
+    return emitter;
 }
 
 #pragma mark - Create Body Methods
@@ -368,7 +446,7 @@
 - (void)createBlockAtLocation:(CGPoint)location withSize:(CGSize)size {
     boxContactBody = NO;
     // Create block and add it to the layer
-    CCSprite *block = [CCSprite spriteWithFile:@"Eater-Normal@2x.png"];
+    block = [CCSprite spriteWithFile:@"Eater-Normal.png"];
     block.position = ccp(location.x/PTM_RATIO, location.y/PTM_RATIO);
     block.tag = 2;
     [self addChild:block z:1000];
@@ -409,20 +487,24 @@
         if (bodyA->GetUserData() != NULL && bodyB->GetUserData() != NULL) {
             CCSprite *spriteA = (CCSprite *) bodyA->GetUserData();
             CCSprite *spriteB = (CCSprite *) bodyB->GetUserData();
-            if (spriteA.tag >= 1000 && spriteB.tag == 2) {
+            if ((spriteA.tag >= 1000 || spriteA.tag == 700) && spriteB.tag == 2) {
                 [dotsToDestroy addObject:[NSValue valueWithPointer:bodyA]];
                 [self updateLevelWithBallHit];
-            } else if (spriteA.tag == 2 && spriteB.tag >= 1000) {
+                [self playCatchAlert];
+            } else if (spriteA.tag == 2 && (spriteB.tag >= 1000 || spriteB.tag == 700)) {
                 [dotsToDestroy addObject:[NSValue valueWithPointer:bodyB]];
                 [self updateLevelWithBallHit];
+                [self playCatchAlert];
             } else if (spriteA.tag == 500 && spriteB.tag == 2) {
                 [dotsToDestroy addObject:[NSValue valueWithPointer:bodyA]];
                 lifeLeft++;
                 bonusBallCatched++;
+                [self playCatchAlert];
             }else if (spriteA.tag == 2 && spriteB.tag == 500) {
                 [dotsToDestroy addObject:[NSValue valueWithPointer:bodyB]];
                 lifeLeft++;
                 bonusBallCatched++;
+                [self playCatchAlert];
             }
         }
 
@@ -453,20 +535,6 @@
 - (void)accelerometer:(UIAccelerometer*)accelerometer didAccelerate:(UIAcceleration*)acceleration{
     b2Vec2 gravity( acceleration.x  * 450, acceleration.y  * 450);
     world->SetGravity( gravity );
-}
-- (void)createParticleEffectInCode {
-//    
-//    CCParticleSystemQuad *emitter = [[CCParticleSystemQuad alloc] initWithTotalParticles:45];
-//    [emitter setEmitterMode: kCCParticleModeGravity];
-//    emitter.position = ccp(100, 100);
-//    emitter.texture=[[CCTextureCache sharedTextureCache] addImage:@"fire.png"];
-    CCParticleFire *fire = [[CCParticleFire alloc]init];
-    fire.position = ccp(screenSize.width/2,screenSize.height/2);
-    [fire setScaleX:0.5];
-    [fire setScaleY:0.5];
-
-    [self addChild:fire z:10000];
-//    [self addChild:emitter];
 }
 
 -(void) dealloc{
