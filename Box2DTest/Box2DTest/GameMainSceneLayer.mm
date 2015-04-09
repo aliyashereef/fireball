@@ -194,7 +194,7 @@
     if ([self getChildByTag:0]) {
         [self removeChildByTag:0 cleanup:YES];
     }
-    if (lifeLeft < 10) {
+    if (timeCount < 10) {
         CCBlink * blinker = [CCBlink actionWithDuration: 0.1 blinks: 1];
         [timeSprite runAction: blinker];
     }
