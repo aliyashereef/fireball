@@ -11,7 +11,7 @@
 
 @interface GameOverSceneLayer : CCLayer<GKGameCenterControllerDelegate,UINavigationControllerDelegate>
 
-+(CCScene *) sceneWithWon:(NSString *)message withScore:(int)score;
-- (id)initWithWon:(NSString *)message withScore:(int)score;
++(CCScene *) sceneWithWon:(NSNumber *)message withScore:(int)score;
+- (id)initWithWon:(NSNumber *)message withScore:(int)score;
 
 @end

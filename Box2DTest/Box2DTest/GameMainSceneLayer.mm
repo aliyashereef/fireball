@@ -16,6 +16,14 @@
 
 #pragma mark - GameMainSceneLayer
 
+typedef enum
+{
+    kGameOverWithHighScore = 0,
+    kGameOverWithOutHighScore = 1,
+    kGameOverWithTimeOut = 2,
+    kGameOverWithHighScoreAndTimeOut= 3,
+}GameOverState;
+
 @interface GameMainSceneLayer(){
     b2Fixture *_ballFixture;
     b2Fixture *_dotFixture;
@@ -34,13 +42,13 @@
     CCSprite *timeSprite;
     
     CCLabelTTF *scoreNode;
-    CCLabelTTF *timeNode;
+    CCLabelTTF *timeNode;CCLabelTTF *startUpTimeNode;
     
     int score;
     int ballHit;
     int timeCount;
     int dotTag;
-    int lifeLeft;
+    int lifeLeft;int startUpCount;
     int bonusBallCatched;
     CGSize screenSize;
     BOOL boxContactBody;
@@ -83,30 +91,49 @@
         dotTag = 1000;
         lifeLeft = 5;
         bonusBallCatched = 0;
-
-        updateTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(UpdateBasicTimer) userInfo:nil repeats:YES];
-        dotLifeTimer = [NSTimer scheduledTimerWithTimeInterval:4 target:self selector:@selector(updateDotLifeTime) userInfo:nil repeats:YES];
-        deleteDotTimer = [NSTimer scheduledTimerWithTimeInterval:3.5 target:self selector:@selector(deleteDot) userInfo:nil repeats:YES];
-        bonusBallTimer = [NSTimer scheduledTimerWithTimeInterval:6 target:self selector:@selector(createBonusBall) userInfo:nil repeats:YES];
-
+        startUpCount = 3;
         
+        startUpTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(showInitialCounter) userInfo:nil repeats:YES];
+
+        startUpTimeNode = [CCLabelTTF labelWithString:[NSString stringWithFormat:@" %d ",startUpCount] fontName:@"Arial" fontSize:100.0 ];
+        startUpTimeNode.position = ccp(screenSize.width*0.5,screenSize.height*0.5);
+        startUpTimeNode.tag = 999;
+        [self addChild:startUpTimeNode z:999];
+
         // Create contact listener
         _contactListener = new BlockContactListener();
         world->SetContactListener(_contactListener);
+        
         [self createBasicUI];
         [self createLifeBar];
-        [self createBlockAtLocation:ccp(screenSize.width/2,screenSize.height/2) withSize:CGSizeMake(10, 10)];
-        double randomNumber = (arc4random()%400);
-        [self createDotAtLocation:ccp(50,randomNumber) withSize:CGSizeMake(10, 10) withTag:dotTag andSprite:[CCSprite spriteWithFile:@"Ball-Normal.png"]];
-        [self scheduleUpdate];
-        [self schedule:@selector(randomMotion) interval:.1];
     }
     return self;
 }
 
+- (void)showInitialCounter {
+    startUpCount--;
+    [startUpTimeNode setString:[NSString stringWithFormat:@" %d ",startUpCount]];
+    if (startUpCount==0) {
+        [startUpTimer invalidate];
+        startUpTimer = nil;
+        [self removeChildByTag:999 cleanup:YES];
+        
+        updateTimer = [NSTimer scheduledTimerWithTimeInterval:.7 target:self selector:@selector(UpdateBasicTimer) userInfo:nil repeats:YES];
+        dotLifeTimer = [NSTimer scheduledTimerWithTimeInterval:4 target:self selector:@selector(updateDotLifeTime) userInfo:nil repeats:YES];
+        deleteDotTimer = [NSTimer scheduledTimerWithTimeInterval:3.5 target:self selector:@selector(deleteDot) userInfo:nil repeats:YES];
+        bonusBallTimer = [NSTimer scheduledTimerWithTimeInterval:6 target:self selector:@selector(createBonusBall) userInfo:nil repeats:YES];
+        
+        [self createBlockAtLocation:ccp(screenSize.width/2,screenSize.height/2) withSize:CGSizeMake(10, 10)];
+        double randomNumber = (arc4random()%400);
+        [self createDotAtLocation:ccp(50,randomNumber) withSize:CGSizeMake(10, 10) withTag:dotTag andSprite:[CCSprite spriteWithFile:@"Ball-Normal.png"]];
+        [self schedule:@selector(randomMotion) interval:.1];
+        [self scheduleUpdate];
+    }
+}
+
 -(void) initPhysics{
     b2Vec2 gravity;
-    gravity.Set(-0.0f, -0.0f);
+    gravity.Set(-1.0, -1.0f);
     world = new b2World(gravity);
     
     // Do we want to let bodies sleep?
@@ -122,7 +149,7 @@
     // Define the ground body.
     b2BodyDef groundBodyDef;
     groundBodyDef.position.Set(0, 0);// bottom-left corner
-    //groundBodyDef.userData =  image;
+
     b2Body* groundBody = world->CreateBody(&groundBodyDef);
     // Define the ground box shape.
     b2EdgeShape groundBox;
@@ -209,21 +236,10 @@
         [self addChild:detectWallCollisionUI z:0];
         boxContactBody = NO;
     }
-    blockBody->SetLinearDamping(10.0);
     timerBar.percentage=1.6777*timeCount;
 
     timeNode.string = [NSString stringWithFormat:@" %d ",timeCount];
     timeCount--;
-    if (timeCount == 0) {
-        [self invalidateAllTimers];
-        score = (60 - (timeCount/10))*3 + 10 + ballHit - ((5 - lifeLeft)*10) + (bonusBallCatched*50);
-        NSString *message = [self updateHighScoreWithScore:score];
-        if (![message isEqualToString:@"High Score !"]) {
-            message = @"Time Out";
-        }
-        CCScene *gameOverScene = [GameOverSceneLayer sceneWithWon:message withScore:score];
-        [[CCDirector sharedDirector] replaceScene:gameOverScene];
-    }
 }
 
 - (void)deleteDot {
@@ -276,12 +292,9 @@
 - (void)endTheGame {
     [self invalidateAllTimers];
     score = (60 - (timeCount/10))*3 + 10 + ballHit - ((5 - lifeLeft)*10) + (bonusBallCatched*50);
-    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.5 * NSEC_PER_SEC));
-    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-        NSString *message = [self updateHighScoreWithScore:score];
-        CCScene *gameOverScene = [GameOverSceneLayer sceneWithWon:message withScore:score];
-        [[CCDirector sharedDirector] replaceScene:gameOverScene];
-    });
+    NSNumber *gameOverState = [self updateHighScoreWithScore:score];
+    CCScene *gameOverScene = [GameOverSceneLayer sceneWithWon:gameOverState withScore:score];
+    [[CCDirector sharedDirector] replaceScene:gameOverScene];
 }
 
 - (void)randomMotion {
@@ -298,8 +311,8 @@
     ballHit++;
     [scoreNode setString:[NSString stringWithFormat:@" %d ", ballHit]];
     dotTag++;
-    double randomNumber = (arc4random()%400);
-    [self createDotAtLocation:ccp(50, randomNumber) withSize:CGSizeMake(10, 10) withTag:dotTag andSprite:[CCSprite spriteWithFile:@"Ball-Normal.png"]];
+    double randomNumberToFireBall = (arc4random()%400);
+    [self createDotAtLocation:ccp(50, randomNumberToFireBall) withSize:CGSizeMake(10, 10) withTag:dotTag andSprite:[CCSprite spriteWithFile:@"Ball-Normal.png"]];
 }
 
 - (void)playCatchAlert {
@@ -334,7 +347,7 @@
         b2Body *body = (b2Body*)[bodyValue pointerValue];
         if (body->GetUserData() != NULL) {
             CCSprite *sprite = (CCSprite *) body->GetUserData();
-            [self addChild:[self createParticleEffectAtPosition:ccp(sprite.position.x, sprite.position.y) forTag:sprite.tag] z:10000];
+            [self addChild:[self createParticleEffectAtPosition:ccp(sprite.position.x, sprite.position.y) forTag:sprite.tag] z:70];
             [self removeChild:sprite cleanup:YES];
             body->SetUserData(NULL);
             world->DestroyBody(body);
@@ -344,14 +357,22 @@
     [dotsToDestroy removeObjectsInArray:dotsToDelete];
 }
 
-- (NSString *)updateHighScoreWithScore:(int)highScore{
+- (NSNumber *)updateHighScoreWithScore:(int)highScore{
     NSNumber *savedScore = [[NSUserDefaults standardUserDefaults] objectForKey:@"High Score"];
     if ( highScore > [savedScore intValue]) {
         [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:highScore] forKey:@"High Score"];
         [[NSUserDefaults standardUserDefaults] synchronize];
-        return @"High Score !";
+        
+        if (timeCount == 0) {
+            return [NSNumber numberWithInt:kGameOverWithHighScoreAndTimeOut];
+        } else {
+            return [NSNumber numberWithInt:kGameOverWithHighScore];
+        }
+        
+    } else if(timeCount == 0){
+        return [NSNumber numberWithInt:kGameOverWithTimeOut];
     } else {
-        return @"Game Over";
+        return [NSNumber numberWithInt:kGameOverWithOutHighScore];
     }
 }
 
@@ -374,17 +395,22 @@
     // angle
     emitter.angle = 0;
     emitter.angleVar = 360;
+    
     //  Gravity Mode: speed of particles
     emitter.speed = 55.33;
     emitter.speedVar = 288.21;
+    
     // gravity
     emitter.gravity = ccp(333.68, 333.68);
+    
     // Gravity Mode:  radial
     emitter.radialAccel = 0;
     emitter.radialAccelVar = 0;
     
     emitter.tangentialAccel = 0;
     emitter.tangentialAccelVar = 0.0;
+    
+    //life
     emitter.life = 0.20;
     emitter.lifeVar = 0.15;
     
@@ -399,22 +425,18 @@
     
     // blend function
     emitter.blendFunc = (ccBlendFunc) { 1,1 };
+    
     // color
     emitter.startColor = (ccColor4F) {255,56,255,1};
-    
     emitter.startColorVar = (ccColor4F) {0,0,0,1};
-    
     emitter.endColor = (ccColor4F) {240,54,255,1};
-    
     emitter.endColorVar = (ccColor4F) {0,0,0,0};
     
     // position
     emitter.position = ccp(0,0);
     
-    
     emitter.emissionRate = emitter.totalParticles/emitter.life;
     emitter.blendAdditive = YES;
-    
     return emitter;
 }
 
@@ -469,11 +491,16 @@
 
 -(void) update: (ccTime) dt {
     world->ClearForces();
-    
+    blockBody->SetLinearDamping(10.0);
+
+    if (lifeLeft <= 0 || timeCount == 0) {
+        [self endTheGame];
+    }
     int32 velocityIterations = 8;
     int32 positionIterations = 1;
     blockBody->SetAngularVelocity(8);
 
+    [self deleteDotsInQueue];
     [lifeBar setPercentage:20*lifeLeft];
     std::vector<DotContact>::iterator pos;
     
@@ -515,7 +542,6 @@
             boxContactBody = YES;
         }
         }
-    [self deleteDotsInQueue];
     for(b2Body *b = world->GetBodyList(); b != NULL; b = b->GetNext()) {
         if (b->GetUserData() != NULL ) {
             CCSpriteBatchNode *sprite = (CCSpriteBatchNode *) b->GetUserData();
@@ -523,9 +549,6 @@
                                   b->GetPosition().y * PTM_RATIO);
             sprite.rotation = CC_RADIANS_TO_DEGREES(b->GetAngle() * -1);
         }
-    }
-    if (lifeLeft == 0) {
-        [self endTheGame];
     }
     world->Step(dt, velocityIterations, positionIterations);
 }

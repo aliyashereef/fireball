@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "cocos2d.h"
+#import <GameKit/GameKit.h>
 
 // Added only for iOS 6 support
 @interface MyNavigationController : UINavigationController <CCDirectorDelegate>
@@ -18,7 +19,6 @@
 	UIWindow *window_;
 	MyNavigationController *navController_;
 	CCDirectorIOS	*director_;
-    CCLabelTTF *startUpTimeNode;
 }
 
 @property (nonatomic, retain) UIWindow *window;
