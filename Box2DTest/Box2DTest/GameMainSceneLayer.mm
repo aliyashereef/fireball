@@ -13,6 +13,7 @@
 #include <math.h>
 #import <AudioToolbox/AudioServices.h>
 #import "GameConstants.h"
+#import "SimpleAudioEngine.h"
 
 #pragma mark - GameMainSceneLayer
 
@@ -87,9 +88,9 @@ typedef enum
         // init physics
         [self initPhysics];
 
-        timeCount = 60;
-        dotTag = 1000;
-        lifeLeft = 5;
+        timeCount = TOTAL_TIME_PLAYED;
+        dotTag = DOT_BODY_TAG;
+        lifeLeft = LIFES_ALLOWED;
         bonusBallCatched = 0;
         startUpCount = 3;
         
@@ -97,8 +98,8 @@ typedef enum
 
         startUpTimeNode = [CCLabelTTF labelWithString:[NSString stringWithFormat:@" %d ",startUpCount] fontName:@"Arial" fontSize:100.0 ];
         startUpTimeNode.position = ccp(screenSize.width*0.5,screenSize.height*0.5);
-        startUpTimeNode.tag = 999;
-        [self addChild:startUpTimeNode z:999];
+        startUpTimeNode.tag = STARTUP_NODE_TAG;
+        [self addChild:startUpTimeNode z:STARTUP_NODE_TAG];
 
         // Create contact listener
         _contactListener = new BlockContactListener();
@@ -106,6 +107,7 @@ typedef enum
         
         [self createBasicUI];
         [self createLifeBar];
+
     }
     return self;
 }
@@ -116,18 +118,20 @@ typedef enum
     if (startUpCount==0) {
         [startUpTimer invalidate];
         startUpTimer = nil;
-        [self removeChildByTag:999 cleanup:YES];
+        [self removeChildByTag:STARTUP_NODE_TAG cleanup:YES];
         
         updateTimer = [NSTimer scheduledTimerWithTimeInterval:.7 target:self selector:@selector(UpdateBasicTimer) userInfo:nil repeats:YES];
         dotLifeTimer = [NSTimer scheduledTimerWithTimeInterval:4 target:self selector:@selector(updateDotLifeTime) userInfo:nil repeats:YES];
         deleteDotTimer = [NSTimer scheduledTimerWithTimeInterval:3.5 target:self selector:@selector(deleteDot) userInfo:nil repeats:YES];
-        bonusBallTimer = [NSTimer scheduledTimerWithTimeInterval:6 target:self selector:@selector(createBonusBall) userInfo:nil repeats:YES];
+        bonusBallTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(createBonusBall) userInfo:nil repeats:YES];
         
         [self createBlockAtLocation:ccp(screenSize.width/2,screenSize.height/2) withSize:CGSizeMake(10, 10)];
         double randomNumber = (arc4random()%400);
         [self createDotAtLocation:ccp(50,randomNumber) withSize:CGSizeMake(10, 10) withTag:dotTag andSprite:[CCSprite spriteWithFile:@"Ball-Normal.png"]];
         [self schedule:@selector(randomMotion) interval:.1];
         [self scheduleUpdate];
+        [[SimpleAudioEngine sharedEngine] playBackgroundMusic:@"BG.wav"];
+        [SimpleAudioEngine sharedEngine].backgroundMusicVolume = 0.08f;
     }
 }
 
@@ -227,6 +231,7 @@ typedef enum
     }
     if (boxContactBody) {
         lifeLeft--;
+        [[SimpleAudioEngine sharedEngine] playEffect:@"cowbell.wav"];
         AudioServicesPlaySystemSound (kSystemSoundID_Vibrate);
         [block setColor:ccc3(255,50,0)];
         CCSprite *detectWallCollisionUI =[CCSprite spriteWithFile:@"UI_2.png" rect:CGRectMake(0, 0,screenSize.width,screenSize.height)];
@@ -248,12 +253,14 @@ typedef enum
             CCSprite *sprite = (CCSprite *) b->GetUserData();
 
             if (sprite.tag >= 1000) {
-                [sprite setColor:ccc3(255,50,0)];sprite.tag = 700;
+                [sprite setColor:ccc3(255,50,0)];
+                sprite.tag = RED_BALL_TAG;
                 double delayInSeconds = 5.0;
                 dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
                 dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
                     if (  b->GetUserData() != NULL ) {
                         [dotsToDestroy addObject:[NSValue valueWithPointer:b]];
+                        [[SimpleAudioEngine sharedEngine] playEffect:@"cowbell.wav"];
                         lifeLeft--;
                     }
                 });
@@ -265,12 +272,12 @@ typedef enum
 - (void)createBonusBall {
     if ( lifeLeft < 5 ) {
         double randomNumber = (arc4random()% 400) ;
-        [self createDotAtLocation:ccp(screenSize.width/2,randomNumber) withSize:CGSizeMake(10, 10) withTag:500 andSprite:[CCSprite spriteWithFile:@"Ball-Bonus.png"]];
+        [self createDotAtLocation:ccp(screenSize.width/2,randomNumber) withSize:CGSizeMake(10, 10) withTag:BONUS_BALL_TAG andSprite:[CCSprite spriteWithFile:@"Ball-Bonus.png"]];
     }
     for(b2Body *b = world->GetBodyList(); b != NULL; b = b->GetNext()) {
         if (b->GetUserData() != NULL ) {
             CCSprite *sprite = (CCSprite *) b->GetUserData();
-            if (sprite.tag == 500) {
+            if (sprite.tag == BONUS_BALL_TAG) {
                 double delayInSeconds = 4.0;
                 dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
                 dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
@@ -291,6 +298,8 @@ typedef enum
 
 - (void)endTheGame {
     [self invalidateAllTimers];
+    [SimpleAudioEngine sharedEngine].stopBackgroundMusic;
+
     score = (60 - (timeCount/10))*3 + 10 + ballHit - ((5 - lifeLeft)*10) + (bonusBallCatched*50);
     NSNumber *gameOverState = [self updateHighScoreWithScore:score];
     CCScene *gameOverScene = [GameOverSceneLayer sceneWithWon:gameOverState withScore:score];
@@ -316,10 +325,8 @@ typedef enum
 }
 
 - (void)playCatchAlert {
-    SystemSoundID myAlertSound;
-    NSURL *url = [NSURL URLWithString:@"/System/Library/Audio/UISounds/new-mail.caf"];
-    AudioServicesCreateSystemSoundID((__bridge CFURLRef)(url), &myAlertSound);
-    AudioServicesPlaySystemSound(myAlertSound);
+    [[SimpleAudioEngine sharedEngine] playEffect:@"dum.mp3"];
+
 }
 
 - (void)invalidateAllTimers{
@@ -381,9 +388,9 @@ typedef enum
     CCParticleSystemQuad *emitter = [[CCParticleSystemQuad alloc] initWithTotalParticles:506];
     emitter.duration = 0.15;
     switch (tag) {
-        case 500:
+        case BONUS_BALL_TAG:
             emitter.texture=[[CCTextureCache sharedTextureCache] addImage:@"GreenParticle.png"];break;
-        case 700:
+        case RED_BALL_TAG:
             emitter.texture=[[CCTextureCache sharedTextureCache] addImage:@"RedParticle.png"];break;
         default:
             emitter.texture=[[CCTextureCache sharedTextureCache] addImage:@"DefaultParticle.png"];break;
@@ -458,7 +465,7 @@ typedef enum
     shape.m_radius = 0.20f;
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &shape;
-    fixtureDef.density = 5;
+    fixtureDef.density = 1;
     fixtureDef.friction = 0;
     fixtureDef.restitution = .5;
     dotb->SetLinearVelocity(b2Vec2(40,40));
@@ -470,7 +477,7 @@ typedef enum
     // Create block and add it to the layer
     block = [CCSprite spriteWithFile:@"Eater-Normal.png"];
     block.position = ccp(location.x/PTM_RATIO, location.y/PTM_RATIO);
-    block.tag = 2;
+    block.tag = WHEEL_TAG;
     [self addChild:block z:1000];
     b2BodyDef bodyDef2;
     bodyDef2.type = b2_dynamicBody;
@@ -514,20 +521,20 @@ typedef enum
         if (bodyA->GetUserData() != NULL && bodyB->GetUserData() != NULL) {
             CCSprite *spriteA = (CCSprite *) bodyA->GetUserData();
             CCSprite *spriteB = (CCSprite *) bodyB->GetUserData();
-            if ((spriteA.tag >= 1000 || spriteA.tag == 700) && spriteB.tag == 2) {
+            if ((spriteA.tag >= 1000 || spriteA.tag == RED_BALL_TAG) && spriteB.tag == WHEEL_TAG) {
                 [dotsToDestroy addObject:[NSValue valueWithPointer:bodyA]];
                 [self updateLevelWithBallHit];
                 [self playCatchAlert];
-            } else if (spriteA.tag == 2 && (spriteB.tag >= 1000 || spriteB.tag == 700)) {
+            } else if (spriteA.tag == WHEEL_TAG && (spriteB.tag >= 1000 || spriteB.tag == RED_BALL_TAG)) {
                 [dotsToDestroy addObject:[NSValue valueWithPointer:bodyB]];
                 [self updateLevelWithBallHit];
                 [self playCatchAlert];
-            } else if (spriteA.tag == 500 && spriteB.tag == 2) {
+            } else if (spriteA.tag == BONUS_BALL_TAG && spriteB.tag == WHEEL_TAG) {
                 [dotsToDestroy addObject:[NSValue valueWithPointer:bodyA]];
                 lifeLeft++;
                 bonusBallCatched++;
                 [self playCatchAlert];
-            }else if (spriteA.tag == 2 && spriteB.tag == 500) {
+            }else if (spriteA.tag == WHEEL_TAG && spriteB.tag == BONUS_BALL_TAG) {
                 [dotsToDestroy addObject:[NSValue valueWithPointer:bodyB]];
                 lifeLeft++;
                 bonusBallCatched++;

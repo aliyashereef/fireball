@@ -12,7 +12,6 @@
 		4D06327F1AD2BD69006FE1A0 /* active-hd.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D06327E1AD2BD69006FE1A0 /* active-hd.png */; };
 		4D0632811AD2C4B3006FE1A0 /* Eater-Normal-hd.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D0632801AD2C4B3006FE1A0 /* Eater-Normal-hd.png */; };
 		4D0632831AD2C576006FE1A0 /* Ball-Normal-hd.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D0632821AD2C576006FE1A0 /* Ball-Normal-hd.png */; };
-		4D0632851AD2C583006FE1A0 /* Ball-Bonus-hd.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D0632841AD2C583006FE1A0 /* Ball-Bonus-hd.png */; };
 		4D0632871AD2CB28006FE1A0 /* time-hd.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D0632861AD2CB28006FE1A0 /* time-hd.png */; };
 		4D0632891AD2CB2F006FE1A0 /* C-BG-hd.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D0632881AD2CB2F006FE1A0 /* C-BG-hd.png */; };
 		4D06328B1AD3AA4D006FE1A0 /* UI_2-hd.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D06328A1AD3AA4D006FE1A0 /* UI_2-hd.png */; };
@@ -200,12 +199,16 @@
 		4D12C81E1AD7C5DC0038BC68 /* GameOver(HS)-hd.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D12C81D1AD7C5DC0038BC68 /* GameOver(HS)-hd.png */; };
 		4D12C8201AD7C5E60038BC68 /* TimeOut-hd.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D12C81F1AD7C5E60038BC68 /* TimeOut-hd.png */; };
 		4D12C8221AD7C5F30038BC68 /* TimeOut(HS)-hd.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D12C8211AD7C5F30038BC68 /* TimeOut(HS)-hd.png */; };
+		4D369B3C1ADBEF4C00DA0368 /* Ball-Bonus-hd.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D369B3B1ADBEF4C00DA0368 /* Ball-Bonus-hd.png */; };
 		4D7CD0441AD6801A0004C8DD /* GreenParticle.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D7CD0431AD6801A0004C8DD /* GreenParticle.png */; };
 		4D7CD0481AD692470004C8DD /* RedParticle.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D7CD0471AD692470004C8DD /* RedParticle.png */; };
 		4D7CD04A1AD692540004C8DD /* DefaultParticle.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D7CD0491AD692540004C8DD /* DefaultParticle.png */; };
 		4DAA840A1AC965AE0035ED90 /* GameMainSceneLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4DAA84091AC965AE0035ED90 /* GameMainSceneLayer.mm */; };
 		4DAA840D1AC981B20035ED90 /* GameOverSceneLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4DAA840C1AC981B20035ED90 /* GameOverSceneLayer.mm */; };
 		4DAA84101AC98C360035ED90 /* GameContactListener.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4DAA840F1AC98C360035ED90 /* GameContactListener.mm */; };
+		4DF999FD1AE7CA1200D1044C /* dum.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 4DF999FC1AE7CA1200D1044C /* dum.mp3 */; };
+		4DF999FF1AE7CD2000D1044C /* BG.wav in Resources */ = {isa = PBXBuildFile; fileRef = 4DF999FE1AE7CD2000D1044C /* BG.wav */; };
+		4DF99A011AE7CED500D1044C /* cowbell.wav in Resources */ = {isa = PBXBuildFile; fileRef = 4DF99A001AE7CED500D1044C /* cowbell.wav */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -214,7 +217,6 @@
 		4D06327E1AD2BD69006FE1A0 /* active-hd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "active-hd.png"; sourceTree = "<group>"; };
 		4D0632801AD2C4B3006FE1A0 /* Eater-Normal-hd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Eater-Normal-hd.png"; sourceTree = "<group>"; };
 		4D0632821AD2C576006FE1A0 /* Ball-Normal-hd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Ball-Normal-hd.png"; sourceTree = "<group>"; };
-		4D0632841AD2C583006FE1A0 /* Ball-Bonus-hd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Ball-Bonus-hd.png"; sourceTree = "<group>"; };
 		4D0632861AD2CB28006FE1A0 /* time-hd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "time-hd.png"; sourceTree = "<group>"; };
 		4D0632881AD2CB2F006FE1A0 /* C-BG-hd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "C-BG-hd.png"; sourceTree = "<group>"; };
 		4D06328A1AD3AA4D006FE1A0 /* UI_2-hd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "UI_2-hd.png"; sourceTree = "<group>"; };
@@ -597,6 +599,7 @@
 		4D12C81D1AD7C5DC0038BC68 /* GameOver(HS)-hd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "GameOver(HS)-hd.png"; sourceTree = "<group>"; };
 		4D12C81F1AD7C5E60038BC68 /* TimeOut-hd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TimeOut-hd.png"; sourceTree = "<group>"; };
 		4D12C8211AD7C5F30038BC68 /* TimeOut(HS)-hd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TimeOut(HS)-hd.png"; sourceTree = "<group>"; };
+		4D369B3B1ADBEF4C00DA0368 /* Ball-Bonus-hd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Ball-Bonus-hd.png"; sourceTree = "<group>"; };
 		4D7CD0431AD6801A0004C8DD /* GreenParticle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GreenParticle.png; sourceTree = "<group>"; };
 		4D7CD0471AD692470004C8DD /* RedParticle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = RedParticle.png; sourceTree = "<group>"; };
 		4D7CD0491AD692540004C8DD /* DefaultParticle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DefaultParticle.png; sourceTree = "<group>"; };
@@ -608,6 +611,9 @@
 		4DAA840C1AC981B20035ED90 /* GameOverSceneLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GameOverSceneLayer.mm; sourceTree = "<group>"; };
 		4DAA840E1AC98C360035ED90 /* GameContactListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameContactListener.h; sourceTree = "<group>"; };
 		4DAA840F1AC98C360035ED90 /* GameContactListener.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GameContactListener.mm; sourceTree = "<group>"; };
+		4DF999FC1AE7CA1200D1044C /* dum.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = dum.mp3; sourceTree = "<group>"; };
+		4DF999FE1AE7CD2000D1044C /* BG.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = BG.wav; sourceTree = "<group>"; };
+		4DF99A001AE7CED500D1044C /* cowbell.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = cowbell.wav; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -700,6 +706,9 @@
 		4D06B0361AC2ED1D00B7AFF5 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				4DF99A001AE7CED500D1044C /* cowbell.wav */,
+				4DF999FE1AE7CD2000D1044C /* BG.wav */,
+				4DF999FC1AE7CA1200D1044C /* dum.mp3 */,
 				4D06B0371AC2ED1D00B7AFF5 /* Default.png */,
 				4D06B0391AC2ED1D00B7AFF5 /* Default@2x.png */,
 				4D06B03B1AC2ED1D00B7AFF5 /* Default-568h@2x.png */,
@@ -1254,8 +1263,8 @@
 				4D12C81B1AD7C5D10038BC68 /* GameOver-hd.png */,
 				4D12C8211AD7C5F30038BC68 /* TimeOut(HS)-hd.png */,
 				4D12C81F1AD7C5E60038BC68 /* TimeOut-hd.png */,
-				4D0632841AD2C583006FE1A0 /* Ball-Bonus-hd.png */,
 				4D12C81D1AD7C5DC0038BC68 /* GameOver(HS)-hd.png */,
+				4D369B3B1ADBEF4C00DA0368 /* Ball-Bonus-hd.png */,
 				4D06328A1AD3AA4D006FE1A0 /* UI_2-hd.png */,
 				4D06327E1AD2BD69006FE1A0 /* active-hd.png */,
 				4D0632901AD40175006FE1A0 /* button-BG-hd.png */,
@@ -1325,7 +1334,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4DF999FD1AE7CA1200D1044C /* dum.mp3 in Resources */,
 				4D7CD04A1AD692540004C8DD /* DefaultParticle.png in Resources */,
+				4D369B3C1ADBEF4C00DA0368 /* Ball-Bonus-hd.png in Resources */,
 				4D0632811AD2C4B3006FE1A0 /* Eater-Normal-hd.png in Resources */,
 				4D0632891AD2CB2F006FE1A0 /* C-BG-hd.png in Resources */,
 				4D06B0481AC2ED1D00B7AFF5 /* Icon.png in Resources */,
@@ -1338,14 +1349,15 @@
 				4D06328F1AD3E519006FE1A0 /* Line-Separator-hd.png in Resources */,
 				4D06327F1AD2BD69006FE1A0 /* active-hd.png in Resources */,
 				4D06B0441AC2ED1D00B7AFF5 /* Icon-Small.png in Resources */,
+				4DF999FF1AE7CD2000D1044C /* BG.wav in Resources */,
 				4D06B0401AC2ED1D00B7AFF5 /* Icon-72.png in Resources */,
 				4D06B0381AC2ED1D00B7AFF5 /* Default.png in Resources */,
 				4D06B0421AC2ED1D00B7AFF5 /* Icon-Small-50.png in Resources */,
 				4D06B04D1AC2ED1D00B7AFF5 /* iTunesArtwork in Resources */,
+				4DF99A011AE7CED500D1044C /* cowbell.wav in Resources */,
 				4D12C81C1AD7C5D10038BC68 /* GameOver-hd.png in Resources */,
 				4D12C8201AD7C5E60038BC68 /* TimeOut-hd.png in Resources */,
 				4D0632911AD40175006FE1A0 /* button-BG-hd.png in Resources */,
-				4D0632851AD2C583006FE1A0 /* Ball-Bonus-hd.png in Resources */,
 				4D12C8221AD7C5F30038BC68 /* TimeOut(HS)-hd.png in Resources */,
 				4D7CD0481AD692470004C8DD /* RedParticle.png in Resources */,
 				4D12C81E1AD7C5DC0038BC68 /* GameOver(HS)-hd.png in Resources */,
